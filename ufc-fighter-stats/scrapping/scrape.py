@@ -145,19 +145,21 @@ def scrape_fighter_data(fighter_url):
         numbers.append(int(number))
         percentages.append(int(percentage))
 
-    significant_strikes_by_standing = numbers[0]
-    significant_strikes_by_clinching = numbers[1]
-    significant_strikes_by_ground = numbers[2]
+    significant_strikes_by_posstanding = numbers[0]
+    significant_strikes_by_posclinching = numbers[1]
+    significant_strikes_by_posground = numbers[2]
     w_by_ko_or_tko = numbers[3]
     w_by_decisions = numbers[4]
     w_by_submissions = numbers[5]
 
-    significant_strikes_by_standing_per = percentages[0]
-    significant_strikes_by_clinching_per = percentages[1]
-    significant_strikes_by_ground_per = percentages[2]
+    significant_strikes_by_posstanding_per = percentages[0]
+    significant_strikes_by_posclinching_per = percentages[1]
+    significant_strikes_by_posground_per = percentages[2]
     w_by_ko_or_tko_per = percentages[3]
     w_by_decisions_per = percentages[4]
     w_by_submissions_per = percentages[5]
+
+
 
     return {
         'name': name,
@@ -180,12 +182,12 @@ def scrape_fighter_data(fighter_url):
         'significant_strikes_defense': significant_strikes_defense,
         'knockdown_avg': knockdown_avg,
         'average_fight_time': average_fight_time,
-        'significant_strikes_by_standing': significant_strikes_by_standing,
-        'significant_strikes_by_standing_per': significant_strikes_by_standing_per,
-        'significant_strikes_by_clinching': significant_strikes_by_clinching,
-        'significant_strikes_by_clinching_per': significant_strikes_by_clinching_per,
-        'significant_strikes_by_ground': significant_strikes_by_ground,
-        'significant_strikes_by_ground_per': significant_strikes_by_ground_per,
+        'significant_strikes_by_standing_position': significant_strikes_by_posstanding,
+        'significant_strikes_by_standing_position_per': significant_strikes_by_posstanding_per,
+        'significant_strikes_by_clinching_position': significant_strikes_by_posclinching,
+        'significant_strikes_by_clinching_position_per': significant_strikes_by_posclinching_per,
+        'significant_strikes_by_ground_position': significant_strikes_by_posground,
+        'significant_strikes_by_ground_position_per': significant_strikes_by_posground_per,
         'w_by_ko_or_tko': w_by_ko_or_tko,
         'w_by_ko_or_tko_per': w_by_ko_or_tko_per,
         'w_by_decisions': w_by_decisions,
