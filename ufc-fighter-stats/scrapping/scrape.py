@@ -25,22 +25,12 @@ def scrape_fighter_data(fighter_url):
     # Helper function to safely extract text from a tag
     def extract_text(tag):
         return tag.text.strip() if tag else 'N/A'
-    
-    def scrape_stats_records(soup):
-        records = []
-        stats_records = soup.find_all('div', class_='c-stat-compare__group')
-        for stats_record in stats_records:
-            compare_groups = stats_record.find_all('div', class_='c-stat-compare__group')
-            record = {}
-            for group in compare_groups:
-                number_tag = group.find('div', class_='c-stat-compare__number')
-                label_tag = group.find('div', class_='c-stat-compare__label')
-                if number_tag and label_tag:
-                    label = label_tag.text.strip()
-                    number = number_tag.text.strip()
-                    record[label] = number
-            records.append(record)
-        return records
+
+    def convert_to_float(percent_string):
+        # Strip away the whitespace and the percentage sign
+        clean_string = percent_string.strip().replace('%', '')
+        # Convert the cleaned string to a float
+        return float(clean_string)
 
     # Extract fighter information
     name = extract_text(soup.find('h1', class_='hero-profile__name'))
@@ -120,18 +110,25 @@ def scrape_fighter_data(fighter_url):
     if takedown_accuracy_percent == None:
         takedown_accuracy_percent = (takedowns_landed/ takedowns_attempted) * 100
 
-    comparison_divs = soup.find_all('div', class_='c-stat-compare__group')
-    significant_strikes_landed = float(comparison_divs[0].find('div', class_='c-stat-compare__number').text.strip())
-    significant_strikes_absorbed_per_min = float(comparison_divs[1].find('div', class_='c-stat-compare__number').text.strip())
-    takedown_avg_per_15_min = float(comparison_divs[2].find('div', class_='c-stat-compare__number').text.strip())
-    submission_avg_per_15_min = float(comparison_divs[3].find('div', class_='c-stat-compare__number').text.strip())
+    number_tags = soup.find_all('div', class_='c-stat-compare__number')
+
+    values = []
+    for tag in number_tags:
+        value = tag.text.strip()
+        values.append(value)
+    
+    significant_strikes_landed = float(values[0])
+    significant_strikes_absorbed_per_min = float(values[1])
+    takedown_avg_per_15_min = float(values[2])
+    submission_avg_per_15_min = float(values[3])
 
     # Extract comparison stats
-    comparison_div = soup.find_all('div', class_='c-stat-compare__group')
-    significant_strikes_defense = float(comparison_div[0].find('div', class_='c-stat-compare__number').text.strip('%'))
-    takedown_defense = float(comparison_div[1].find('div', class_='c-stat-compare__number').text.strip())  # Corrected
-    knockdown_avg = float(comparison_div[2].find('div', class_='c-stat-compare__number').text.strip())
-    average_fight_time = comparison_div[3].find('div', class_='c-stat-compare__number').text.strip()
+
+    significant_strikes_defense = convert_to_float(values[4])
+    knockdown_avg = float(values[5])
+    average_fight_time = values[6]
+
+    
 
     return {
         'name': name,
@@ -139,32 +136,23 @@ def scrape_fighter_data(fighter_url):
         'win': win,
         'loss': loss,
         'draw': draw,
-        'wins_by_knockout': None,
-        'first_round_finishes': None,
-        'striking_accuracy_percent': None,
-        'significant_strikes_landed': None,
-        'significant_strikes_attempted': None,
-        'takedown_accuracy_percent': None,
-        'takedowns_landed': None,
-        'takedowns_attempted': None,
-        'significant_strikes_landed_per_min': None,
-        'significant_strikes_absorbed_per_min': None,
-        'takedown_avg_per_15_min': None,
-        'submission_avg_per_15_min': None,
-        'significant_strikes_defense': None,
-        'takedown_defense': None,
-        'knockdown_avg': None,
-        'average_fight_time': None
+        'wins_by_knockout': wins_by_knockout,
+        'first_round_finishes': first_round_finishes,
+        'striking_accuracy_percent': striking_accuracy_percent,
+        'significant_strikes_landed': significant_strikes_landed,
+        'significant_strikes_attempted': significant_strikes_attempted,
+        'takedown_accuracy_percent': takedown_accuracy_percent,
+        'takedowns_landed': takedowns_landed,
+        'takedowns_attempted': takedowns_attempted,
+        'significant_strikes_landed_per_min': significant_strikes_landed_per_min,
+        'significant_strikes_absorbed_per_min': significant_strikes_absorbed_per_min,
+        'takedown_avg_per_15_min': takedown_avg_per_15_min,
+        'submission_avg_per_15_min': submission_avg_per_15_min,
+        'significant_strikes_defense': significant_strikes_defense,
+        'knockdown_avg': knockdown_avg,
+        'average_fight_time': average_fight_time
     }
 
-    # Extract stats records
-    records = scrape_stats_records(soup)
-    for record in records:
-        for key, value in record.items():
-            if key in stats:
-                stats[key] = int(value) if value.isdigit() else value
-
-    return stats
 
 # Test the function with a fighter URL
 fighter_url = 'https://www.ufc.com/athlete/hamdy-abdelwahab'
