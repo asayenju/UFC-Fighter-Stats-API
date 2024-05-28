@@ -159,7 +159,12 @@ def scrape_fighter_data(fighter_url):
     w_by_decisions_per = percentages[4]
     w_by_submissions_per = percentages[5]
 
-
+    strike_to_head = int(soup.find('text', id='e-stat-body_x5F__x5F_head_value').text)
+    strike_to_head_per = float(soup.find('text', id='e-stat-body_x5F__x5F_head_percent').text.strip('%'))
+    strike_to_body = int(soup.find('text', id='e-stat-body_x5F__x5F_body_value').text)
+    strike_to_body_per = float(soup.find('text', id='e-stat-body_x5F__x5F_body_percent').text.strip('%'))
+    strike_to_leg = int(soup.find('text', id='e-stat-body_x5F__x5F_leg_value').text)
+    strike_to_leg_per = float(soup.find('text', id='e-stat-body_x5F__x5F_leg_percent').text.strip('%'))
 
     return {
         'name': name,
@@ -193,7 +198,13 @@ def scrape_fighter_data(fighter_url):
         'w_by_decisions': w_by_decisions,
         'w_by_decisions_per': w_by_decisions_per,
         'w_by_submissions': w_by_submissions,
-        'w_by_submissions_per': w_by_submissions_per
+        'w_by_submissions_per': w_by_submissions_per,
+        'strike_to_head': strike_to_head,
+        'strike_to_head_per': strike_to_head_per,
+        'strike_to_body': strike_to_body,
+        'strike_to_body_per': strike_to_body_per,
+        'strike_to_leg': strike_to_leg,
+        'strike_to_leg_per': strike_to_leg_per
     }
 
 
