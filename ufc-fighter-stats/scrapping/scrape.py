@@ -166,9 +166,34 @@ def scrape_fighter_data(fighter_url):
     strike_to_leg = int(soup.find('text', id='e-stat-body_x5F__x5F_leg_value').text)
     strike_to_leg_per = float(soup.find('text', id='e-stat-body_x5F__x5F_leg_percent').text.strip('%'))
 
+    nametags = soup.find_all('div', class_="c-bio__text")
+    values = []
+    for tag in nametags:
+        value = tag.text.strip()
+        values.append(value)
+
+    status = values[0]
+    place_of_birth = values[1]
+    fight_style = values[2]
+    age = int(values[3])
+    height = float(values[4])
+    weight = float(values[5])
+    ufc_debut = values[6]
+    reach = float(values[7])
+    leg_reach = float(values[8])
+
     return {
         'name': name,
         'division_title': division_title,
+        'place_of_birth': place_of_birth,
+        'status': status,
+        'fight_style': fight_style,
+        'age': age,
+        'height': height,
+        'weight': weight,
+        'ufc_debut': ufc_debut,
+        'reach': reach,
+        'leg_reach': leg_reach,
         'win': win,
         'loss': loss,
         'draw': draw,
@@ -204,7 +229,8 @@ def scrape_fighter_data(fighter_url):
         'strike_to_body': strike_to_body,
         'strike_to_body_per': strike_to_body_per,
         'strike_to_leg': strike_to_leg,
-        'strike_to_leg_per': strike_to_leg_per
+        'strike_to_leg_per': strike_to_leg_per,
+
     }
 
 
