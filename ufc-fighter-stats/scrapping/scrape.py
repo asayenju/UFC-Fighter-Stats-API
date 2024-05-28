@@ -6,14 +6,27 @@ import json
 import pandas as panda
 import time
 
-#function that returns fighter urls as a list
-def get_fighter_urls(main_url, base_url):
-    response = requests.get(main_url)
-    soup = BeautifulSoup(response.text, 'html.parser')
     
-    # Example: Assume the fighter links are in <a> tags with href like '/athlete/athlete-name'
-    links = soup.find_all('a', href=True)
-    fighter_urls = [base_url + link['href'] for link in links if link['href'].startswith('/athlete/')]
+def get_fighter_urls(main_url, base_url):
+    fighter_urls = []
+    page_number = 1
+    
+    while True:
+        response = requests.get(main_url, params={'page': page_number})
+        soup = BeautifulSoup(response.content, 'html.parser')
+        
+        # Find all athlete links
+        links = soup.find_all('a', href=True)
+        athlete_links = [link['href'] for link in links if link['href'].startswith('/athlete/')]
+        fighter_urls.extend([base_url + link for link in athlete_links])
+        
+        # Check if there are more pages to load
+        next_page_button = soup.find('button', title='Load more items')
+        if not next_page_button:
+            break
+        
+        page_number += 1
+        time.sleep(5)  # Adjust as needed to avoid overloading the server
     
     return fighter_urls
 
@@ -261,6 +274,14 @@ def scrape_fighter_data(fighter_url):
 
 
 # Test the function with a fighter URL
-fighter_url = 'https://www.ufc.com/athlete/israel-adesanya'
+"""
+fighter_url = 'https://www.ufc.com/athlete/jiri-prochazka'
 print(scrape_fighter_data(fighter_url))
+"""
+
+#Test function that stores all fighter url in an array
+main_url = 'https://www.ufc.com/athletes/all'
+base_url = 'https://www.ufc.com/athletes'
+fighter_urls = get_fighter_urls(main_url, base_url)
+print(fighter_urls)
 
