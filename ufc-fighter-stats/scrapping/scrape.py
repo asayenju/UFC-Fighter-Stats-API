@@ -42,12 +42,12 @@ def scrape_fighter_data(fighter_url):
   # Initialize specific stats
     wins_by_knockout = None
     first_round_finishes = None
-    striking_accuracy_title = None
     striking_accuracy_percent = None
+    striking_accuracy_title = None
     significant_strikes_landed = None
     significant_strikes_attempted = None
-    takedown_accuracy_title = None
     takedown_accuracy_percent = None
+    takedown_accuracy_title = None
     takedowns_landed = None
     takedowns_attempted = None
     significant_strikes_landed_per_min = None
@@ -55,7 +55,6 @@ def scrape_fighter_data(fighter_url):
     takedown_avg_per_15_min = None
     submission_avg_per_15_min = None
     significant_strikes_defense = None
-    takedown_defense = None
     knockdown_avg = None
     average_fight_time = None
     
@@ -128,7 +127,37 @@ def scrape_fighter_data(fighter_url):
     knockdown_avg = float(values[5])
     average_fight_time = values[6]
 
+    num_tags = soup.find_all('div', class_='c-stat-3bar__value')
+    val = []
+    for tag in num_tags:
+        value = tag.text.strip()
+        val.append(value)
     
+    numbers = []
+    percentages = []
+    
+    for item in val:
+        # Split the item into the main number and the percentage part
+        number, percentage = item.split(' ')
+        # Remove the parentheses and the percentage sign
+        percentage = percentage.strip('()%')
+        # Convert both parts to integers and store them in respective lists
+        numbers.append(int(number))
+        percentages.append(int(percentage))
+
+    significant_strikes_by_standing = numbers[0]
+    significant_strikes_by_clinching = numbers[1]
+    significant_strikes_by_ground = numbers[2]
+    w_by_ko_or_tko = numbers[3]
+    w_by_decisions = numbers[4]
+    w_by_submissions = numbers[5]
+
+    significant_strikes_by_standing_per = percentages[0]
+    significant_strikes_by_clinching_per = percentages[1]
+    significant_strikes_by_ground_per = percentages[2]
+    w_by_ko_or_tko_per = percentages[3]
+    w_by_decisions_per = percentages[4]
+    w_by_submissions_per = percentages[5]
 
     return {
         'name': name,
@@ -150,7 +179,19 @@ def scrape_fighter_data(fighter_url):
         'submission_avg_per_15_min': submission_avg_per_15_min,
         'significant_strikes_defense': significant_strikes_defense,
         'knockdown_avg': knockdown_avg,
-        'average_fight_time': average_fight_time
+        'average_fight_time': average_fight_time,
+        'significant_strikes_by_standing': significant_strikes_by_standing,
+        'significant_strikes_by_standing_per': significant_strikes_by_standing_per,
+        'significant_strikes_by_clinching': significant_strikes_by_clinching,
+        'significant_strikes_by_clinching_per': significant_strikes_by_clinching_per,
+        'significant_strikes_by_ground': significant_strikes_by_ground,
+        'significant_strikes_by_ground_per': significant_strikes_by_ground_per,
+        'w_by_ko_or_tko': w_by_ko_or_tko,
+        'w_by_ko_or_tko_per': w_by_ko_or_tko_per,
+        'w_by_decisions': w_by_decisions,
+        'w_by_decisions_per': w_by_decisions_per,
+        'w_by_submissions': w_by_submissions,
+        'w_by_submissions_per': w_by_submissions_per
     }
 
 
