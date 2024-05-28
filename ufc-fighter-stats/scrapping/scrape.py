@@ -48,8 +48,40 @@ def scrape_fighter_data(fighter_url):
     division_body = extract_text(soup.find('h1', class_='hero-profile__division-body'))
     win_loss_draw = division_body.split(' ')[0].split('-')
     win, loss, draw = map(int, win_loss_draw) if len(win_loss_draw) == 3 else (None, None, None)
+    
+  # Initialize specific stats
+    wins_by_knockout = None
+    first_round_finishes = None
+    striking_accuracy_title = None
+    striking_accuracy_percent = None
+    significant_strikes_landed = None
+    significant_strikes_attempted = None
+    takedown_accuracy_title = None
+    takedown_accuracy_percent = None
+    takedowns_landed = None
+    takedowns_attempted = None
+    significant_strikes_landed_per_min = None
+    significant_strikes_absorbed_per_min = None
+    takedown_avg_per_15_min = None
+    submission_avg_per_15_min = None
+    significant_strikes_defense = None
+    takedown_defense = None
+    knockdown_avg = None
+    average_fight_time = None
+    
+    # Extract stats
+    stat_divs = soup.find_all('div', class_='hero-profile__stat')
+    for stat_div in stat_divs:
+        stat_value = int(extract_text(stat_div.find('p', class_='hero-profile__stat-numb')))
+        stat_description = extract_text(stat_div.find('p', class_='hero-profile__stat-text'))
+        
+        # Assign to specific variables based on the description
+        if stat_description == 'Wins by Knockout':
+            wins_by_knockout = stat_value
+        elif stat_description == 'First Round Finishes':
+            first_round_finishes = stat_value
 
-        # Extract striking accuracy data
+    # Extract striking accuracy data
     striking_accuracy_title_tag = soup.find('title', string='Striking accuracy')
     if striking_accuracy_title_tag:
         striking_accuracy_title = striking_accuracy_title_tag.string
@@ -101,8 +133,7 @@ def scrape_fighter_data(fighter_url):
     knockdown_avg = float(comparison_div[2].find('div', class_='c-stat-compare__number').text.strip())
     average_fight_time = comparison_div[3].find('div', class_='c-stat-compare__number').text.strip()
 
-    # Initialize specific stats
-    stats = {
+    return {
         'name': name,
         'division_title': division_title,
         'win': win,
