@@ -36,9 +36,14 @@ def scrape_fighter_data(fighter_url):
     name = extract_text(soup.find('h1', class_='hero-profile__name'))
     division_title = extract_text(soup.find('p', class_='hero-profile__division-title'))
     division_body = extract_text(soup.find('h1', class_='hero-profile__division-body'))
-    win_loss_draw = division_body.split(' ')[0].split('-')
-    win, loss, draw = map(int, win_loss_draw) if len(win_loss_draw) == 3 else (None, None, None)
     
+    # Find the <p> element by its class
+    division_body = soup.find('p', class_='hero-profile__division-body')
+    # Extract the text content
+    division_text = division_body.text
+    # Split the text to extract win, loss, and draw values
+    win, loss, draw = map(int, division_text.split(' ')[0].split('-'))
+        
   # Initialize specific stats
     wins_by_knockout = None
     first_round_finishes = None
@@ -239,6 +244,6 @@ def scrape_fighter_data(fighter_url):
 
 
 # Test the function with a fighter URL
-fighter_url = 'https://www.ufc.com/athlete/alex-pereira'
+fighter_url = 'https://www.ufc.com/athlete/hamdy-abdelwahab'
 print(scrape_fighter_data(fighter_url))
 
