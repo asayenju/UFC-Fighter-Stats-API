@@ -62,6 +62,7 @@ def scrape_fighter_data(fighter_url):
     significant_strikes_defense = None
     knockdown_avg = None
     average_fight_time = None
+    trains_at = None
     
     # Extract stats
     stat_divs = soup.find_all('div', class_='hero-profile__stat')
@@ -181,21 +182,37 @@ def scrape_fighter_data(fighter_url):
         value = tag.text.strip()
         values.append(value)
 
-    status = values[0]
-    place_of_birth = values[1]
-    fight_style = values[2]
-    age = int(values[3])
-    height = float(values[4])
-    weight = float(values[5])
-    ufc_debut = values[6]
-    reach = float(values[7])
-    leg_reach = float(values[8])
+    print(len(values))
+    if (len(values) == 10):
+        status = values[0]
+        place_of_birth = values[1]
+        trains_at = values[2]
+        fight_style = values[3]
+        age = int(values[4])
+        height = float(values[5])
+        weight = float(values[6])
+        ufc_debut = values[7]
+        reach = float(values[8])
+        leg_reach = float(values[8])
+    else:
+
+        status = values[0]
+        place_of_birth = values[1]
+        fight_style = values[2]
+        age = int(values[3])
+        height = float(values[4])
+        weight = float(values[5])
+        ufc_debut = values[6]
+        reach = float(values[7])
+        leg_reach = float(values[8])
+    print(values)
 
     return {
         'name': name,
         'division_title': division_title,
         'place_of_birth': place_of_birth,
         'status': status,
+        'trains_at': trains_at,
         'fight_style': fight_style,
         'age': age,
         'height': height,
@@ -244,6 +261,6 @@ def scrape_fighter_data(fighter_url):
 
 
 # Test the function with a fighter URL
-fighter_url = 'https://www.ufc.com/athlete/hamdy-abdelwahab'
+fighter_url = 'https://www.ufc.com/athlete/israel-adesanya'
 print(scrape_fighter_data(fighter_url))
 
