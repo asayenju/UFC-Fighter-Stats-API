@@ -96,8 +96,12 @@ def scrape_fighter_data(fighter_url):
             takedown_accuracy_percent = int(takedown_accuracy_percent_tag.string[:-1])
 
     takedowns_landed_tag = soup.find('dt', string='Takedowns Landed')
-    if takedowns_landed_tag:
-        takedowns_landed = int(takedowns_landed_tag.find_next_sibling('dd').string)
+    try:
+        if takedowns_landed_tag:
+            takedowns_landed = int(takedowns_landed_tag.find_next_sibling('dd').string)
+    except:
+        takedows_landed = None
+        
 
     takedowns_attempted_tag = soup.find('dt', string='Takedowns Attempted')
     if takedowns_attempted_tag:
@@ -106,7 +110,7 @@ def scrape_fighter_data(fighter_url):
     if striking_accuracy_percent == None:
         striking_accuracy_percent = (significant_strikes_landed/ significant_strikes_attempted) * 100
 
-    if takedown_accuracy_percent == None:
+    if takedown_accuracy_percent == None and takedowns_landed != None and takedowns_attempted != None:
         takedown_accuracy_percent = (takedowns_landed/ takedowns_attempted) * 100
 
     number_tags = soup.find_all('div', class_='c-stat-compare__number')
@@ -124,7 +128,7 @@ def scrape_fighter_data(fighter_url):
     # Extract comparison stats
 
     significant_strikes_defense = convert_to_float(values[4])
-    knockdown_avg = float(values[5])
+    knockdown_avg = convert_to_float(values[5])
     average_fight_time = values[6]
 
     num_tags = soup.find_all('div', class_='c-stat-3bar__value')
@@ -235,6 +239,6 @@ def scrape_fighter_data(fighter_url):
 
 
 # Test the function with a fighter URL
-fighter_url = 'https://www.ufc.com/athlete/hamdy-abdelwahab'
+fighter_url = 'https://www.ufc.com/athlete/alex-pereira'
 print(scrape_fighter_data(fighter_url))
 
