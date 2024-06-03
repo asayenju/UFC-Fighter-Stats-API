@@ -14,6 +14,7 @@ from selenium.webdriver.support import expected_conditions as EC
 
 def get_fighter_urls():
     # Define the URL path and scraped files folder path
+    global fighter_urls
     url_path = os.getcwd() + '/urls'
     file_path = os.getcwd() + '/scraped_files'
 
@@ -65,7 +66,6 @@ def get_fighter_urls():
         # Close the WebDriver session
         driver.quit()
 
-    return fighter_urls
 
 def scrape_fighter_data(fighter_url):
     headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'}
@@ -319,6 +319,6 @@ print(scrape_fighter_data(fighter_url))
 #Test function that stores all fighter url in an array
 main_url = 'https://www.ufc.com/athletes/all'
 base_url = 'https://www.ufc.com/athletes'
-fighter_urls = get_fighter_urls()
+get_fighter_urls()
 print(f"Total fighter URLs found: {len(fighter_urls)}")
 
