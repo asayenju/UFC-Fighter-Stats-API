@@ -5,29 +5,66 @@ import psycopg2.extras
 import json
 import pandas as panda
 import time
+import os
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
-    
-def get_fighter_urls(main_url, base_url):
+
+def get_fighter_urls():
+    # Define the URL path and scraped files folder path
+    url_path = os.getcwd() + '/urls'
+    file_path = os.getcwd() + '/scraped_files'
+
+    # Create the file path if it doesn't exist
+    os.makedirs(url_path, exist_ok=True)
+    os.makedirs(file_path, exist_ok=True)
+
+    # URL to scrape fighter data
+    main_url = 'https://www.ufc.com/athletes/all'
     fighter_urls = []
-    page_number = 1
+
+    # Start a Selenium WebDriver session
+    driver = webdriver.Chrome()  # You need to have Chrome WebDriver installed and added to PATH
     
-    while True:
-        response = requests.get(main_url, params={'page': page_number})
-        soup = BeautifulSoup(response.content, 'html.parser')
+    try:
+        # Open the main URL
+        driver.get(main_url)
         
-        # Find all athlete links
-        links = soup.find_all('a', href=True)
-        athlete_links = [link['href'] for link in links if link['href'].startswith('/athlete/')]
-        fighter_urls.extend([base_url + link for link in athlete_links])
-        
-        # Check if there are more pages to load
-        next_page_button = soup.find('button', title='Load more items')
-        if not next_page_button:
-            break
-        
-        page_number += 1
-        time.sleep(5)  # Adjust as needed to avoid overloading the server
-    
+        # Function to extract fighter URLs from the page source
+        def extract_fighter_urls():
+            links = driver.find_elements(By.CSS_SELECTOR, 'a[href^="/athlete/"]')
+            for link in links:
+                href = link.get_attribute('href')
+                fighter_urls.append(href)
+
+        # Extract initial fighter URLs
+        extract_fighter_urls()
+
+        # Click the "Load More" button until no more pages left
+        while True:
+            try:
+                # Find the "Load More" button
+                load_more_button = driver.find_element(By.XPATH, "//a[@title='Load more items']")
+                
+                # Extract the href attribute to construct the URL
+                href = load_more_button.get_attribute('href')
+                
+                # Visit the next page
+                driver.get(href)
+                time.sleep(2)  # Add a short delay to avoid overwhelming the server
+                
+                # Extract fighter URLs from the new page
+                extract_fighter_urls()
+            except Exception as e:
+                print(f"Error clicking 'Load More' button: {e}")
+                break
+
+    finally:
+        # Close the WebDriver session
+        driver.quit()
+
     return fighter_urls
 
 def scrape_fighter_data(fighter_url):
@@ -282,6 +319,6 @@ print(scrape_fighter_data(fighter_url))
 #Test function that stores all fighter url in an array
 main_url = 'https://www.ufc.com/athletes/all'
 base_url = 'https://www.ufc.com/athletes'
-fighter_urls = get_fighter_urls(main_url, base_url)
-print(fighter_urls)
+fighter_urls = get_fighter_urls()
+print(f"Total fighter URLs found: {len(fighter_urls)}")
 
