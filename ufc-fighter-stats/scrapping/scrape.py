@@ -83,179 +83,204 @@ def scrape_fighter_data(fighter_url):
         return float(clean_string)
 
     # Extract fighter information
-    name = extract_text(soup.find('h1', class_='hero-profile__name'))
-    division_title = extract_text(soup.find('p', class_='hero-profile__division-title'))
-    division_body = extract_text(soup.find('h1', class_='hero-profile__division-body'))
-    
-    # Find the <p> element by its class
-    division_body = soup.find('p', class_='hero-profile__division-body')
-    # Extract the text content
-    division_text = division_body.text
-    # Split the text to extract win, loss, and draw values
-    win, loss, draw = map(int, division_text.split(' ')[0].split('-'))
-        
-  # Initialize specific stats
-    wins_by_knockout = None
-    first_round_finishes = None
-    striking_accuracy_percent = None
-    striking_accuracy_title = None
-    significant_strikes_landed = None
-    significant_strikes_attempted = None
-    takedown_accuracy_percent = None
-    takedown_accuracy_title = None
-    takedowns_landed = None
-    takedowns_attempted = None
-    significant_strikes_landed_per_min = None
-    significant_strikes_absorbed_per_min = None
-    takedown_avg_per_15_min = None
-    submission_avg_per_15_min = None
-    significant_strikes_defense = None
-    knockdown_avg = None
-    average_fight_time = None
-    trains_at = None
-    
-    # Extract stats
-    stat_divs = soup.find_all('div', class_='hero-profile__stat')
-    for stat_div in stat_divs:
-        stat_value = int(extract_text(stat_div.find('p', class_='hero-profile__stat-numb')))
-        stat_description = extract_text(stat_div.find('p', class_='hero-profile__stat-text'))
-        
-        # Assign to specific variables based on the description
-        if stat_description == 'Wins by Knockout':
-            wins_by_knockout = stat_value
-        elif stat_description == 'First Round Finishes':
-            first_round_finishes = stat_value
-
-    # Extract striking accuracy data
-    striking_accuracy_title_tag = soup.find('title', string='Striking accuracy')
-    if striking_accuracy_title_tag:
-        striking_accuracy_title = striking_accuracy_title_tag.string
-        striking_accuracy_percent_tag = soup.find('text', class_='e-chart-circle__percent')
-        if striking_accuracy_percent_tag:
-            striking_accuracy_percent = int(striking_accuracy_percent_tag.string[:-1])
-
-    # Extract significant strikes data
-    sig_strikes_landed_tag = soup.find('dt', string='Sig. Strikes Landed')
-    if sig_strikes_landed_tag:
-        significant_strikes_landed = int(sig_strikes_landed_tag.find_next_sibling('dd').string)
-
-    sig_strikes_attempted_tag = soup.find('dt', string='Sig. Strikes Attempted')
-    if sig_strikes_attempted_tag:
-        significant_strikes_attempted = int(sig_strikes_attempted_tag.find_next_sibling('dd').string)
-
-    # Extract takedown accuracy data
-    takedown_accuracy_title_tag = soup.find('title', string='Takedown Accuracy')
-    if takedown_accuracy_title_tag:
-        takedown_accuracy_title = takedown_accuracy_title_tag.string
-        takedown_accuracy_percent_tag = soup.find('text', class_='e-chart-circle__percent')
-        if takedown_accuracy_percent_tag:
-            takedown_accuracy_percent = int(takedown_accuracy_percent_tag.string[:-1])
-
-    takedowns_landed_tag = soup.find('dt', string='Takedowns Landed')
     try:
-        if takedowns_landed_tag:
-            takedowns_landed = int(takedowns_landed_tag.find_next_sibling('dd').string)
+        name = extract_text(soup.find('h1', class_='hero-profile__name'))
     except:
-        takedows_landed = None
-        
+        name = None
 
-    takedowns_attempted_tag = soup.find('dt', string='Takedowns Attempted')
-    if takedowns_attempted_tag:
-        takedowns_attempted = int(takedowns_attempted_tag.find_next_sibling('dd').string)
+    try:
+        division_title = extract_text(soup.find('p', class_='hero-profile__division-title'))
+    except:
+        division_title = None
 
-    if striking_accuracy_percent == None:
-        striking_accuracy_percent = (significant_strikes_landed/ significant_strikes_attempted) * 100
+    try:
+        division_body = extract_text(soup.find('h1', class_='hero-profile__division-body'))
+    except:
+        division_body = None
 
-    if takedown_accuracy_percent == None and takedowns_landed != None and takedowns_attempted != None:
-        takedown_accuracy_percent = (takedowns_landed/ takedowns_attempted) * 100
+    try:
+        # Find the <p> element by its class
+        division_body = soup.find('p', class_='hero-profile__division-body')
+        # Extract the text content
+        division_text = division_body.text
+        # Split the text to extract win, loss, and draw values
+        win, loss, draw = map(int, division_text.split(' ')[0].split('-'))
+    except:
+        win = loss = draw = None
 
-    number_tags = soup.find_all('div', class_='c-stat-compare__number')
+    # Initialize specific stats with None values
+    wins_by_knockout = first_round_finishes = striking_accuracy_percent = None
+    significant_strikes_landed = significant_strikes_attempted = takedown_accuracy_percent = None
+    takedowns_landed = takedowns_attempted = significant_strikes_landed_per_min = None
+    significant_strikes_absorbed_per_min = takedown_avg_per_15_min = submission_avg_per_15_min = None
+    significant_strikes_defense = knockdown_avg = average_fight_time = trains_at = takedown_defense_perc = None
 
-    values = []
-    for tag in number_tags:
-        value = tag.text.strip()
-        values.append(value)
+    try:
+        # Extract stats
+        stat_divs = soup.find_all('div', class_='hero-profile__stat')
+        for stat_div in stat_divs:
+            stat_value = int(extract_text(stat_div.find('p', class_='hero-profile__stat-numb')))
+            stat_description = extract_text(stat_div.find('p', class_='hero-profile__stat-text'))
+
+            # Assign to specific variables based on the description
+            if stat_description == 'Wins by Knockout':
+                wins_by_knockout = stat_value
+            elif stat_description == 'First Round Finishes':
+                first_round_finishes = stat_value
+    except:
+        pass
+
+    try:
+        # Extract striking accuracy data
+        striking_accuracy_title_tag = soup.find('title', string='Striking accuracy')
+        if striking_accuracy_title_tag:
+            striking_accuracy_title = striking_accuracy_title_tag.string
+            striking_accuracy_percent_tag = soup.find('text', class_='e-chart-circle__percent')
+            if striking_accuracy_percent_tag:
+                striking_accuracy_percent = int(striking_accuracy_percent_tag.string[:-1])
+    except:
+        pass
+
+    try:
+        # Extract significant strikes data
+        sig_strikes_landed_tag = soup.find('dt', string='Sig. Strikes Landed')
+        if sig_strikes_landed_tag:
+            significant_strikes_landed = int(sig_strikes_landed_tag.find_next_sibling('dd').string)
+
+        sig_strikes_attempted_tag = soup.find('dt', string='Sig. Strikes Attempted')
+        if sig_strikes_attempted_tag:
+            significant_strikes_attempted = int(sig_strikes_attempted_tag.find_next_sibling('dd').string)
+    except:
+        pass
+
+    try:
+        # Extract takedown accuracy data
+        takedown_accuracy_title_tag = soup.find('title', string='Takedown Accuracy')
+        if takedown_accuracy_title_tag:
+            takedown_accuracy_title = takedown_accuracy_title_tag.string
+            takedown_accuracy_percent_tag = soup.find('text', class_='e-chart-circle__percent')
+            if takedown_accuracy_percent_tag:
+                takedown_accuracy_percent = int(takedown_accuracy_percent_tag.string[:-1])
+
+        takedowns_landed_tag = soup.find('dt', string='Takedowns Landed')
+        try:
+            if takedowns_landed_tag:
+                takedowns_landed = int(takedowns_landed_tag.find_next_sibling('dd').string)
+        except:
+            takedowns_landed = None
+
+        takedowns_attempted_tag = soup.find('dt', string='Takedowns Attempted')
+        if takedowns_attempted_tag:
+            takedowns_attempted = int(takedowns_attempted_tag.find_next_sibling('dd').string)
+
+        if striking_accuracy_percent == None:
+            striking_accuracy_percent = (significant_strikes_landed / significant_strikes_attempted) * 100
+
+        if takedown_accuracy_percent == None and takedowns_landed != None and takedowns_attempted != None:
+            takedown_accuracy_percent = (takedowns_landed / takedowns_attempted) * 100
+    except:
+        pass
     
-    significant_strikes_landed = float(values[0])
-    significant_strikes_absorbed_per_min = float(values[1])
-    takedown_avg_per_15_min = float(values[2])
-    submission_avg_per_15_min = float(values[3])
+    try:
+        number_tags = soup.find_all('div', class_='c-stat-compare__number')
 
-    # Extract comparison stats
+        values = []
+        for tag in number_tags:
+            value = tag.text.strip()
+            values.append(value)
 
-    significant_strikes_defense = convert_to_float(values[4])
-    knockdown_avg = convert_to_float(values[5])
-    average_fight_time = values[6]
+        significant_strikes_landed_per_min = float(values[0])
+        significant_strikes_absorbed_per_min = float(values[1])
+        takedown_avg_per_15_min = float(values[2])
+        submission_avg_per_15_min = float(values[3])
 
-    num_tags = soup.find_all('div', class_='c-stat-3bar__value')
-    val = []
-    for tag in num_tags:
-        value = tag.text.strip()
-        val.append(value)
-    
-    numbers = []
-    percentages = []
-    
-    for item in val:
-        # Split the item into the main number and the percentage part
-        number, percentage = item.split(' ')
-        # Remove the parentheses and the percentage sign
-        percentage = percentage.strip('()%')
-        # Convert both parts to integers and store them in respective lists
-        numbers.append(int(number))
-        percentages.append(int(percentage))
+        significant_strikes_defense = convert_to_float(values[4])
+        takedown_defense_perc = convert_to_float(values[5])
+        knockdown_avg = float(values[6])
+        average_fight_time = values[7]
+    except:
+        pass
+        print(number_tags)
+    try:
+        num_tags = soup.find_all('div', class_='c-stat-3bar__value')
+        val = []
+        for tag in num_tags:
+            value = tag.text.strip()
+            val.append(value)
 
-    significant_strikes_by_posstanding = numbers[0]
-    significant_strikes_by_posclinching = numbers[1]
-    significant_strikes_by_posground = numbers[2]
-    w_by_ko_or_tko = numbers[3]
-    w_by_decisions = numbers[4]
-    w_by_submissions = numbers[5]
+        numbers = []
+        percentages = []
 
-    significant_strikes_by_posstanding_per = percentages[0]
-    significant_strikes_by_posclinching_per = percentages[1]
-    significant_strikes_by_posground_per = percentages[2]
-    w_by_ko_or_tko_per = percentages[3]
-    w_by_decisions_per = percentages[4]
-    w_by_submissions_per = percentages[5]
+        for item in val:
+            # Split the item into the main number and the percentage part
+            number, percentage = item.split(' ')
+            # Remove the parentheses and the percentage sign
+            percentage = percentage.strip('()%')
+            # Convert both parts to integers and store them in respective lists
+            numbers.append(int(number))
+            percentages.append(int(percentage))
 
-    strike_to_head = int(soup.find('text', id='e-stat-body_x5F__x5F_head_value').text)
-    strike_to_head_per = float(soup.find('text', id='e-stat-body_x5F__x5F_head_percent').text.strip('%'))
-    strike_to_body = int(soup.find('text', id='e-stat-body_x5F__x5F_body_value').text)
-    strike_to_body_per = float(soup.find('text', id='e-stat-body_x5F__x5F_body_percent').text.strip('%'))
-    strike_to_leg = int(soup.find('text', id='e-stat-body_x5F__x5F_leg_value').text)
-    strike_to_leg_per = float(soup.find('text', id='e-stat-body_x5F__x5F_leg_percent').text.strip('%'))
+        significant_strikes_by_posstanding = numbers[0]
+        significant_strikes_by_posclinching = numbers[1]
+        significant_strikes_by_posground = numbers[2]
+        w_by_ko_or_tko = numbers[3]
+        w_by_decisions = numbers[4]
+        w_by_submissions = numbers[5]
 
-    nametags = soup.find_all('div', class_="c-bio__text")
-    values = []
-    for tag in nametags:
-        value = tag.text.strip()
-        values.append(value)
+        significant_strikes_by_posstanding_per = percentages[0]
+        significant_strikes_by_posclinching_per = percentages[1]
+        significant_strikes_by_posground_per = percentages[2]
+        w_by_ko_or_tko_per = percentages[3]
+        w_by_decisions_per = percentages[4]
+        w_by_submissions_per = percentages[5]
+    except:
+        significant_strikes_by_posstanding = significant_strikes_by_posclinching = significant_strikes_by_posground = None
+        w_by_ko_or_tko = w_by_decisions = w_by_submissions = None
+        significant_strikes_by_posstanding_per = significant_strikes_by_posclinching_per = significant_strikes_by_posground_per = None
+        w_by_ko_or_tko_per = w_by_decisions_per = w_by_submissions_per = None
 
-    print(len(values))
-    if (len(values) == 10):
-        status = values[0]
-        place_of_birth = values[1]
-        trains_at = values[2]
-        fight_style = values[3]
-        age = int(values[4])
-        height = float(values[5])
-        weight = float(values[6])
-        ufc_debut = values[7]
-        reach = float(values[8])
-        leg_reach = float(values[8])
-    else:
+    try:
+        strike_to_head = int(soup.find('text', id='e-stat-body_x5F__x5F_head_value').text)
+        strike_to_head_per = float(soup.find('text', id='e-stat-body_x5F__x5F_head_percent').text.strip('%'))
+        strike_to_body = int(soup.find('text', id='e-stat-body_x5F__x5F_body_value').text)
+        strike_to_body_per = float(soup.find('text', id='e-stat-body_x5F__x5F_body_percent').text.strip('%'))
+        strike_to_leg = int(soup.find('text', id='e-stat-body_x5F__x5F_leg_value').text)
+        strike_to_leg_per = float(soup.find('text', id='e-stat-body_x5F__x5F_leg_percent').text.strip('%'))
+    except:
+        strike_to_head = strike_to_head_per = strike_to_body = strike_to_body_per = strike_to_leg = strike_to_leg_per = None
 
-        status = values[0]
-        place_of_birth = values[1]
-        fight_style = values[2]
-        age = int(values[3])
-        height = float(values[4])
-        weight = float(values[5])
-        ufc_debut = values[6]
-        reach = float(values[7])
-        leg_reach = float(values[8])
-    print(values)
+    try:
+        nametags = soup.find_all('div', class_="c-bio__text")
+        values = []
+        for tag in nametags:
+            value = tag.text.strip()
+            values.append(value)
+
+        if len(values) == 10:
+            status = values[0]
+            place_of_birth = values[1]
+            trains_at = values[2]
+            fight_style = values[3]
+            age = float(values[4])
+            height = float(values[5])
+            weight = float(values[6])
+            ufc_debut = values[7]
+            reach = float(values[8])
+            leg_reach = float(values[8])
+        elif len(values) == 9:
+            status = values[0]
+            place_of_birth = values[1]
+            fight_style = values[2]
+            age = int(values[3])
+            height = float(values[4])
+            weight = float(values[5])
+            ufc_debut = values[6]
+            reach = float(values[7])
+            leg_reach = float(values[8])
+        else:
+            status = place_of_birth = trains_at = fight_style = age = height = weight = ufc_debut = reach = leg_reach = None
+    except:
+        status = place_of_birth = trains_at = fight_style = age = height = weight = ufc_debut = reach = leg_reach = None
 
     return {
         'name': name,
@@ -286,6 +311,7 @@ def scrape_fighter_data(fighter_url):
         'takedown_avg_per_15_min': takedown_avg_per_15_min,
         'submission_avg_per_15_min': submission_avg_per_15_min,
         'significant_strikes_defense': significant_strikes_defense,
+        'take_down_defense_perc': takedown_defense_perc,
         'knockdown_avg': knockdown_avg,
         'average_fight_time': average_fight_time,
         'significant_strikes_by_standing_position': significant_strikes_by_posstanding,
@@ -306,19 +332,17 @@ def scrape_fighter_data(fighter_url):
         'strike_to_body_per': strike_to_body_per,
         'strike_to_leg': strike_to_leg,
         'strike_to_leg_per': strike_to_leg_per,
-
     }
 
-
 # Test the function with a fighter URL
-"""
-fighter_url = 'https://www.ufc.com/athlete/jiri-prochazka'
+
+fighter_url = 'https://www.ufc.com/athlete/john-adajar'
 print(scrape_fighter_data(fighter_url))
-"""
 
 #Test function that stores all fighter url in an array
 main_url = 'https://www.ufc.com/athletes/all'
 base_url = 'https://www.ufc.com/athletes'
-get_fighter_urls()
-print(f"Total fighter URLs found: {len(fighter_urls)}")
-
+#get_fighter_urls()
+#print(f"Total fighter URLs found: {len(fighter_urls)}")
+#for i in range(len(fighter_urls)):
+    #scrape_fighter_data(fighter_urls[i])
