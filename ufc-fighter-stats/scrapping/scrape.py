@@ -101,6 +101,16 @@ def scrape_fighter_data(fighter_url):
         'win': win,
         'loss': loss,
         'draw': draw,
+        'trains_at': None,
+        'place_of_birth': None,
+        'status': None,
+        'fight_style': None,
+        'age': None,
+        'height': None,
+        'weight': None,
+        'ufc_debut': None,
+        'reach': None,
+        'leg_reach': None,
         'wins_by_knockout': None,
         'first_round_finishes': None,
         'striking_accuracy_percent': None,
@@ -117,16 +127,6 @@ def scrape_fighter_data(fighter_url):
         'takedown_defense_percent': None,
         'knockdown_avg': None,
         'average_fight_time': None,
-        'trains_at': None,
-        'place_of_birth': None,
-        'status': None,
-        'fight_style': None,
-        'age': None,
-        'height': None,
-        'weight': None,
-        'ufc_debut': None,
-        'reach': None,
-        'leg_reach': None,
         'sig_str_standing_amount': None,
         'sig_str_clinch_amount': None,
         'sig_str_ground_amount': None,
@@ -388,6 +388,46 @@ def scrape_fighter_data(fighter_url):
         stats['strike_to_leg_per'] = float(soup.find('text', id='e-stat-body_x5F__x5F_leg_percent').text.strip('%'))
     except:
         pass
+
+    try:
+
+        fields = soup.find_all(class_='c-bio__field')
+# Iterate over rows
+        for field in fields:
+            label_element = field.find(class_='c-bio__label')
+            if label_element:
+                label = label_element.text.strip()
+                print(label)
+                text_element = field.find(class_='c-bio__text')
+                if text_element:
+                    text = text_element.get_text(strip=True)
+
+                    if label.lower() == "status":
+                        stats['status'] = text
+                    elif label.lower() == "place of birth":
+                        stats['place_of_birth'] = text
+                    elif label.lower() == "trains at":
+                        stats['trains_at'] = text
+                    elif label.lower() == "fighting style":
+                        stats['fight_style'] = text
+                    elif label.lower() == "age":
+                        stats['age'] = int(text)
+                    elif label.lower() == "height":
+                        stats['height'] = text
+                    elif label.lower() == "weight":
+                        stats['weight'] = text
+                    elif label.lower() == "octagon debut":
+                        stats['ufc_debut'] = text
+                    elif label.lower() == "reach":
+                        stats['reach'] = text
+                    elif label.lower() == "leg reach":
+                        stats['leg_reach'] = text
+                    
+            
+            
+
+    except Exception as e:
+        print(f"An error occurred while parsing fighter bio: {e}")
 
     return stats
 
