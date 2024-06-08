@@ -109,11 +109,12 @@ def scrape_fighter_data(fighter_url):
         'takedown_accuracy_percent': None,
         'takedowns_landed': None,
         'takedowns_attempted': None,
-        'significant_strikes_landed_per_min': None,
-        'significant_strikes_absorbed_per_min': None,
+        'sig_str_landed_per_min': None,
+        'sig_str_absorbed_per_min': None,
         'takedown_avg_per_15_min': None,
         'submission_avg_per_15_min': None,
-        'significant_strikes_defense': None,
+        'sig_str_defense_percent': None,
+        'takedown_defense_percent': None,
         'knockdown_avg': None,
         'average_fight_time': None,
         'trains_at': None,
@@ -255,18 +256,74 @@ def scrape_fighter_data(fighter_url):
 
 
     try:
-        number_tags = soup.find_all('div', class_='c-stat-compare__number')
-        values = [tag.text.strip() for tag in number_tags]
+        # Find all div elements with class 'c-stat-compare__group-1'
+        stats_group_1_elements = soup.find_all('div', class_='c-stat-compare__group-1')
 
-        stats['significant_strikes_landed_per_min'] = float(values[0])
-        stats['significant_strikes_absorbed_per_min'] = float(values[1])
-        stats['takedown_avg_per_15_min'] = float(values[2])
-        stats['submission_avg_per_15_min'] = float(values[3])
-        stats['significant_strikes_defense'] = convert_to_float(values[4])
-        stats['knockdown_avg'] = convert_to_float(values[5])
-        stats['average_fight_time'] = values[6]
-    except:
-        pass
+        # Initialize variables to store stats
+        sig_str_landed_per_min = None
+        takedown_avg_per_15_min = None
+        sig_str_defense_percent = None
+        knockdown_avg = None
+        
+
+        # Iterate through the elements
+        for element in stats_group_1_elements:
+            # Extract the stat number and label
+            stat_number = element.find(class_='c-stat-compare__number').get_text().strip()
+            stat_label = element.find(class_='c-stat-compare__label').get_text().strip()
+
+            # Check the label and assign the value accordingly
+            if 'Sig. Str. Landed' in stat_label:
+                sig_str_landed_per_min = float(stat_number)
+            elif 'Takedown avg' in stat_label:
+                takedown_avg_per_15_min = float(stat_number)
+            elif 'Sig. Str. Defense' in stat_label:
+                sig_str_defense_percent = convert_to_float(stat_number)
+            elif 'Knockdown Avg' in stat_label:
+                knockdown_avg = float(stat_number)
+
+        stats['sig_str_landed_per_min'] = sig_str_landed_per_min
+        stats['takedown_avg_per_15_min'] = takedown_avg_per_15_min
+        stats['sig_str_defense_percent'] = sig_str_defense_percent
+        stats['knockdown_avg'] = knockdown_avg
+
+    except Exception as e:
+        print("An error occurred while parsing stats group 1:", e)
+
+    try:
+        # Find all div elements with class 'c-stat-compare__group-1'
+        stats_group_2_elements = soup.find_all('div', class_='c-stat-compare__group-2')
+
+        # Initialize variables to store stats
+        sig_str_absorbed_per_min = None
+        submission_avg_per_15_min = None
+        takedown_defense_percent = None
+        average_fight_time = None
+        
+
+        # Iterate through the elements
+        for element in stats_group_2_elements:
+            # Extract the stat number and label
+            stat_number = element.find(class_='c-stat-compare__number').get_text().strip()
+            stat_label = element.find(class_='c-stat-compare__label').get_text().strip()
+
+            # Check the label and assign the value accordingly
+            if 'Sig. Str. Absorbed' in stat_label:
+                sig_str_absorbed_per_min = float(stat_number)
+            elif 'Submission avg' in stat_label:
+                submission_avg_per_15_min = float(stat_number)
+            elif 'Takedown Defense' in stat_label:
+                takedown_defense_percent = convert_to_float(stat_number)
+            elif 'Average fight time' in stat_label:
+                average_fight_time = stat_number
+
+        stats['sig_str_absorbed_per_min'] = sig_str_absorbed_per_min
+        stats['submission_avg_per_15_min'] = submission_avg_per_15_min
+        stats['takedown_defense_percent'] = takedown_defense_percent
+        stats['average_fight_time'] = average_fight_time
+
+    except Exception as e:
+        print("An error occurred while parsing stats group 1:", e)
 
     try:
         num_tags = soup.find_all('div', class_='c-stat-3bar__value')
