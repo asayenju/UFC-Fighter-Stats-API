@@ -120,7 +120,8 @@ def scrape_fighter_data(fighter_url):
         stats['takedown_accuracy_percent'] = takedown_accuracy_percentage
 
     except Exception as e:
-        print("An error occurred while parsing accuracy percentages:", e)
+        #print("An error occurred while parsing accuracy percentages:", e)
+        pass
 
     try:
         # Find the div for striking accuracy
@@ -151,7 +152,8 @@ def scrape_fighter_data(fighter_url):
                 stats['significant_strikes_attempted'] = sig_strikes_attempted
 
     except Exception as e:
-        print("An error occurred while parsing striking accuracy stats:", e)
+        #print("An error occurred while parsing striking accuracy stats:", e)
+        pass
 
     try:
         # Find the div for takedown accuracy
@@ -182,7 +184,8 @@ def scrape_fighter_data(fighter_url):
                 stats['takedowns_attempted'] = takedowns_attempted
 
     except Exception as e:
-        print("An error occurred while parsing takedown accuracy stats:", e)
+        #print("An error occurred while parsing takedown accuracy stats:", e)
+        pass
 
     if stats['striking_accuracy_percent'] is None and stats['significant_strikes_landed'] is not None and stats['significant_strikes_attempted'] is not None:
         stats['striking_accuracy_percent'] = (stats['significant_strikes_landed'] / stats['significant_strikes_attempted']) * 100
@@ -224,7 +227,8 @@ def scrape_fighter_data(fighter_url):
         stats['knockdown_avg'] = knockdown_avg
 
     except Exception as e:
-        print("An error occurred while parsing stats group 1:", e)
+        #print("An error occurred while parsing stats group 1:", e)
+        pass
 
     try:
         # Find all div elements with class 'c-stat-compare__group-1'
@@ -259,7 +263,8 @@ def scrape_fighter_data(fighter_url):
         stats['average_fight_time'] = average_fight_time
 
     except Exception as e:
-        print("An error occurred while parsing stats group 1:", e)
+        #print("An error occurred while parsing stats group 1:", e)
+        pass
 
     try:
         # Store all values and percentages in an array
@@ -313,7 +318,8 @@ def scrape_fighter_data(fighter_url):
                 stats['win_by_sub_percentage'] = percentage
 
     except Exception as e:
-        print(f"An error occurred while parsing stats: {e}")
+        #print(f"An error occurred while parsing stats: {e}")
+        pass
 
     try:
         stats['strike_to_head'] = int(soup.find('text', id='e-stat-body_x5F__x5F_head_value').text)
@@ -359,14 +365,16 @@ def scrape_fighter_data(fighter_url):
                         stats['leg_reach'] = text
 
     except Exception as e:
-        print(f"An error occurred while parsing fighter bio: {e}")
+        #print(f"An error occurred while parsing fighter bio: {e}")
+        pass
 
     return stats
 
 # Test the function with a fighter URL
 
-fighter_url = 'https://www.ufc.com/athlete/danny-abbadi'
-print(scrape_fighter_data(fighter_url))
+fighter_url1 = 'https://www.ufc.com/athlete/danny-abbadi'
+fighter_url2='https://www.ufc.com/athlete/israel-adesanya'
+print(scrape_fighter_data(fighter_url1))
 
 #Test function that stores all fighter url in an array
 main_url = 'https://www.ufc.com/athletes/all'
