@@ -127,18 +127,18 @@ def scrape_fighter_data(fighter_url):
         'ufc_debut': None,
         'reach': None,
         'leg_reach': None,
-        'significant_strikes_by_posstanding': None,
-        'significant_strikes_by_posclinching': None,
-        'significant_strikes_by_posground': None,
-        'w_by_ko_or_tko': None,
-        'w_by_decisions': None,
-        'w_by_submissions': None,
-        'significant_strikes_by_posstanding_per': None,
-        'significant_strikes_by_posclinching_per': None,
-        'significant_strikes_by_posground_per': None,
-        'w_by_ko_or_tko_per': None,
-        'w_by_decisions_per': None,
-        'w_by_submissions_per': None,
+        'sig_str_standing_amount': None,
+        'sig_str_clinch_amount': None,
+        'sig_str_ground_amount': None,
+        'win_by_ko_tko_amount': None,
+        'win_by_dec_amount': None,
+        'win_by_sub_amount': None,
+        'sig_str_standing_percentage': None,
+        'sig_str_clinch_percentage': None,
+        'sig_str_ground_percentage': None,
+        'win_by_ko_tko_percentage': None,
+        'win_by_dec_percentage': None,
+        'win_by_sub_percentage': None,
         'strike_to_head': None,
         'strike_to_head_per': None,
         'strike_to_body': None,
@@ -326,34 +326,58 @@ def scrape_fighter_data(fighter_url):
         print("An error occurred while parsing stats group 1:", e)
 
     try:
-        num_tags = soup.find_all('div', class_='c-stat-3bar__value')
-        val = [tag.text.strip() for tag in num_tags]
+        # Store all values and percentages in an array
+        value_percent_pairs = []
 
-        numbers = []
-        percentages = []
+        # Find all value/percentage pairs in Sig. Str. By Position section
+        sig_str_position_div = soup.find('h2', class_='c-stat-3bar__title', string='Sig. Str. By Position')
+        if sig_str_position_div:
+            position_groups = sig_str_position_div.find_next('div', class_='c-stat-3bar__legend').find_all('div', class_='c-stat-3bar__group')
+            for group in position_groups:
+                label = group.find('div', class_='c-stat-3bar__label').get_text(strip=True)
+                value = group.find('div', class_='c-stat-3bar__value').get_text(strip=True)
+                value_percent_pairs.append((label, value))
 
-        for item in val:
-            parts = item.split(' ')
-            number = parts[0]
-            percentage = parts[1] if len(parts) > 1 else '0%'
-            percentage = percentage.strip('()%')
-            numbers.append(int(number))
-            percentages.append(int(percentage))
+        # Find all value/percentage pairs in Win by Method section
+        win_by_method_div = soup.find('h2', class_='c-stat-3bar__title', string='Win by Method')
+        if win_by_method_div:
+            method_groups = win_by_method_div.find_next('div', class_='c-stat-3bar__legend').find_all('div', class_='c-stat-3bar__group')
+            for group in method_groups:
+                label = group.find('div', class_='c-stat-3bar__label').get_text(strip=True)
+                value = group.find('div', class_='c-stat-3bar__value').get_text(strip=True)
+                value_percent_pairs.append((label, value))
 
-        stats['significant_strikes_by_posstanding'] = numbers[0]
-        stats['significant_strikes_by_posclinching'] = numbers[1]
-        stats['significant_strikes_by_posground'] = numbers[2]
-        stats['w_by_ko_or_tko'] = numbers[3]
-        stats['w_by_decisions'] = numbers[4]
-        stats['w_by_submissions'] = numbers[5]
-        stats['significant_strikes_by_posstanding_per'] = percentages[0]
-        stats['significant_strikes_by_posclinching_per'] = percentages[1]
-        stats['significant_strikes_by_posground_per'] = percentages[2]
-        stats['w_by_ko_or_tko_per'] = percentages[3]
-        stats['w_by_decisions_per'] = percentages[4]
-        stats['w_by_submissions_per'] = percentages[5]
-    except:
-        pass
+        # Process the value/percentage pairs and assign them to the correct variables
+        for label, value in value_percent_pairs:
+            if ' ' in value:
+                amount, percentage = value.split(' ')
+                amount = int(amount)
+                percentage = float(percentage.strip('()%'))
+            else:
+                amount = int(value)
+                percentage = None
+
+            if label.lower() == 'standing':
+                stats['sig_str_standing_amount'] = amount
+                stats['sig_str_standing_percentage'] = percentage
+            elif label.lower() == 'clinch':
+                stats['sig_str_clinch_amount'] = amount
+                stats['sig_str_clinch_percentage'] = percentage
+            elif label.lower() == 'ground':
+                stats['sig_str_ground_amount'] = amount
+                stats['sig_str_ground_percentage'] = percentage
+            elif label.lower() == 'ko/tko':
+                stats['win_by_ko_tko_amount'] = amount
+                stats['win_by_ko_tko_percentage'] = percentage
+            elif label.lower() == 'dec':
+                stats['win_by_dec_amount'] = amount
+                stats['win_by_dec_percentage'] = percentage
+            elif label.lower() == 'sub':
+                stats['win_by_sub_amount'] = amount
+                stats['win_by_sub_percentage'] = percentage
+
+    except Exception as e:
+        print(f"An error occurred while parsing stats: {e}")
 
     try:
         stats['strike_to_head'] = int(soup.find('text', id='e-stat-body_x5F__x5F_head_value').text)
