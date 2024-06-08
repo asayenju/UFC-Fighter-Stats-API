@@ -74,269 +74,245 @@ def scrape_fighter_data(fighter_url):
 
     # Helper function to safely extract text from a tag
     def extract_text(tag):
-        return tag.text.strip() if tag else 'N/A'
+        return tag.text.strip() if tag else None
 
     def convert_to_float(percent_string):
-        # Strip away the whitespace and the percentage sign
-        clean_string = percent_string.strip().replace('%', '')
-        # Convert the cleaned string to a float
-        return float(clean_string)
+        try:
+            clean_string = percent_string.strip().replace('%', '')
+            return float(clean_string)
+        except (ValueError, AttributeError):
+            return None
 
     # Extract fighter information
-    try:
-        name = extract_text(soup.find('h1', class_='hero-profile__name'))
-    except:
-        name = None
+    name = extract_text(soup.find('h1', class_='hero-profile__name'))
+    division_title = extract_text(soup.find('p', class_='hero-profile__division-title'))
+    division_body = extract_text(soup.find('h1', class_='hero-profile__division-body'))
 
     try:
-        division_title = extract_text(soup.find('p', class_='hero-profile__division-title'))
-    except:
-        division_title = None
-
-    try:
-        division_body = extract_text(soup.find('h1', class_='hero-profile__division-body'))
-    except:
-        division_body = None
-
-    try:
-        # Find the <p> element by its class
         division_body = soup.find('p', class_='hero-profile__division-body')
-        # Extract the text content
         division_text = division_body.text
-        # Split the text to extract win, loss, and draw values
         win, loss, draw = map(int, division_text.split(' ')[0].split('-'))
     except:
-        win = loss = draw = None
+        win, loss, draw = None, None, None
 
-    # Initialize specific stats with None values
-    wins_by_knockout = first_round_finishes = striking_accuracy_percent = None
-    significant_strikes_landed = significant_strikes_attempted = takedown_accuracy_percent = None
-    takedowns_landed = takedowns_attempted = significant_strikes_landed_per_min = None
-    significant_strikes_absorbed_per_min = takedown_avg_per_15_min = submission_avg_per_15_min = None
-    significant_strikes_defense = knockdown_avg = average_fight_time = trains_at = takedown_defense_perc = None
+    stats = {
+        'name': name,
+        'division_title': division_title,
+        'win': win,
+        'loss': loss,
+        'draw': draw,
+        'wins_by_knockout': None,
+        'first_round_finishes': None,
+        'striking_accuracy_percent': None,
+        'significant_strikes_landed': None,
+        'significant_strikes_attempted': None,
+        'takedown_accuracy_percent': None,
+        'takedowns_landed': None,
+        'takedowns_attempted': None,
+        'significant_strikes_landed_per_min': None,
+        'significant_strikes_absorbed_per_min': None,
+        'takedown_avg_per_15_min': None,
+        'submission_avg_per_15_min': None,
+        'significant_strikes_defense': None,
+        'knockdown_avg': None,
+        'average_fight_time': None,
+        'trains_at': None,
+        'place_of_birth': None,
+        'status': None,
+        'fight_style': None,
+        'age': None,
+        'height': None,
+        'weight': None,
+        'ufc_debut': None,
+        'reach': None,
+        'leg_reach': None,
+        'significant_strikes_by_posstanding': None,
+        'significant_strikes_by_posclinching': None,
+        'significant_strikes_by_posground': None,
+        'w_by_ko_or_tko': None,
+        'w_by_decisions': None,
+        'w_by_submissions': None,
+        'significant_strikes_by_posstanding_per': None,
+        'significant_strikes_by_posclinching_per': None,
+        'significant_strikes_by_posground_per': None,
+        'w_by_ko_or_tko_per': None,
+        'w_by_decisions_per': None,
+        'w_by_submissions_per': None,
+        'strike_to_head': None,
+        'strike_to_head_per': None,
+        'strike_to_body': None,
+        'strike_to_body_per': None,
+        'strike_to_leg': None,
+        'strike_to_leg_per': None
+    }
 
     try:
-        # Extract stats
         stat_divs = soup.find_all('div', class_='hero-profile__stat')
         for stat_div in stat_divs:
             stat_value = int(extract_text(stat_div.find('p', class_='hero-profile__stat-numb')))
             stat_description = extract_text(stat_div.find('p', class_='hero-profile__stat-text'))
 
-            # Assign to specific variables based on the description
             if stat_description == 'Wins by Knockout':
-                wins_by_knockout = stat_value
+                stats['wins_by_knockout'] = stat_value
             elif stat_description == 'First Round Finishes':
-                first_round_finishes = stat_value
+                stats['first_round_finishes'] = stat_value
     except:
         pass
 
     try:
-        # Extract striking accuracy data
-        striking_accuracy_title_tag = soup.find('title', string='Striking accuracy')
-        if striking_accuracy_title_tag:
-            striking_accuracy_title = striking_accuracy_title_tag.string
-            striking_accuracy_percent_tag = soup.find('text', class_='e-chart-circle__percent')
-            if striking_accuracy_percent_tag:
-                striking_accuracy_percent = int(striking_accuracy_percent_tag.string[:-1])
-    except:
-        pass
+        # Find all <text> elements with class 'e-chart-circle__percent'
+        percent_elements = soup.find_all('text', class_='e-chart-circle__percent')
+
+        # Initialize variables to store accuracy percentages
+        striking_accuracy_percentage = None
+        takedown_accuracy_percentage = None
+
+        # Iterate through the <text> elements
+        for element in percent_elements:
+            # Extract the accuracy percentage value
+            accuracy_percentage = element.get_text().strip()
+
+            # Check if it represents striking accuracy or takedown accuracy
+            if 'Striking accuracy' in element.parent.find('title').get_text():
+                striking_accuracy_percentage = convert_to_float(accuracy_percentage)
+            elif 'Takedown Accuracy' in element.parent.find('title').get_text():
+                takedown_accuracy_percentage = convert_to_float(accuracy_percentage)
+
+        # Store accuracy percentages in the stats dictionary
+        stats['striking_accuracy_percent'] = striking_accuracy_percentage
+        stats['takedown_accuracy_percent'] = takedown_accuracy_percentage
+
+    except Exception as e:
+        print("An error occurred while parsing accuracy percentages:", e)
 
     try:
-        # Extract significant strikes data
-        sig_strikes_landed_tag = soup.find('dt', string='Sig. Strikes Landed')
-        if sig_strikes_landed_tag:
-            significant_strikes_landed = int(sig_strikes_landed_tag.find_next_sibling('dd').string)
+        # Find the div for striking accuracy
+        striking_accuracy_h2_tag = soup.find('h2', class_='e-t3', string='Striking accuracy')
 
-        sig_strikes_attempted_tag = soup.find('dt', string='Sig. Strikes Attempted')
-        if sig_strikes_attempted_tag:
-            significant_strikes_attempted = int(sig_strikes_attempted_tag.find_next_sibling('dd').string)
-    except:
-        pass
+        # Navigate to its parent div tag
+        if striking_accuracy_h2_tag:
+            striking_accuracy_title_tag = striking_accuracy_h2_tag.parent
+        else:
+            raise ValueError("Striking Accuracy title tag not found.")
+
+        # Find significant strikes landed and attempted
+        striking_dl = striking_accuracy_title_tag.find_next_sibling('div', class_='c-overlap__stats-wrap')
+        if striking_dl:
+            sig_strikes_landed_tag = striking_dl.find('dt', class_='c-overlap__stats-text', string='Sig. Strikes Landed')
+            if sig_strikes_landed_tag:
+                sig_strikes_landed = sig_strikes_landed_tag.find_next_sibling('dd', class_='c-overlap__stats-value').text.strip()
+                # Check if sig_strikes_landed is blank, if so, set it to None
+                sig_strikes_landed = None if not sig_strikes_landed else int(sig_strikes_landed)
+                stats['significant_strikes_landed'] = sig_strikes_landed
+
+            # Find significant strikes attempted
+            sig_strikes_attempted_tag = striking_dl.find('dt', class_='c-overlap__stats-text', string='Sig. Strikes Attempted')
+            if sig_strikes_attempted_tag:
+                sig_strikes_attempted = sig_strikes_attempted_tag.find_next_sibling('dd', class_='c-overlap__stats-value').text.strip()
+                # Check if sig_strikes_attempted is blank, if so, set it to None
+                sig_strikes_attempted = None if not sig_strikes_attempted else int(sig_strikes_attempted)
+                stats['significant_strikes_attempted'] = sig_strikes_attempted
+
+    except Exception as e:
+        print("An error occurred while parsing striking accuracy stats:", e)
 
     try:
-        # Extract takedown accuracy data
-        takedown_accuracy_title_tag = soup.find('title', string='Takedown Accuracy')
-        if takedown_accuracy_title_tag:
-            takedown_accuracy_title = takedown_accuracy_title_tag.string
-            takedown_accuracy_percent_tag = soup.find('text', class_='e-chart-circle__percent')
-            if takedown_accuracy_percent_tag:
-                takedown_accuracy_percent = int(takedown_accuracy_percent_tag.string[:-1])
+        # Find the div for takedown accuracy
+        takedown_accuracy_h2_tag = soup.find('h2', class_='e-t3', string='Takedown Accuracy')
 
-        takedowns_landed_tag = soup.find('dt', string='Takedowns Landed')
-        try:
+        # Navigate to its parent div tag
+        if takedown_accuracy_h2_tag:
+            takedown_accuracy_title_tag = takedown_accuracy_h2_tag.parent
+        else:
+            raise ValueError("Takedown Accuracy title tag not found.")
+
+        # Find takedowns landed and attempted
+        takedown_dl = takedown_accuracy_title_tag.find_next_sibling('div', class_='c-overlap__stats-wrap')
+        if takedown_dl:
+            takedowns_landed_tag = takedown_dl.find('dt', class_='c-overlap__stats-text', string='Takedowns Landed')
             if takedowns_landed_tag:
-                takedowns_landed = int(takedowns_landed_tag.find_next_sibling('dd').string)
-        except:
-            takedowns_landed = None
+                takedowns_landed = takedowns_landed_tag.find_next_sibling('dd', class_='c-overlap__stats-value').text.strip()
+                # Check if takedowns_landed is blank, if so, set it to None
+                takedowns_landed = None if not takedowns_landed else int(takedowns_landed)
+                stats['takedowns_landed'] = takedowns_landed
 
-        takedowns_attempted_tag = soup.find('dt', string='Takedowns Attempted')
-        if takedowns_attempted_tag:
-            takedowns_attempted = int(takedowns_attempted_tag.find_next_sibling('dd').string)
+            # Find takedowns attempted
+            takedowns_attempted_tag = takedown_dl.find('dt', class_='c-overlap__stats-text', string='Takedowns Attempted')
+            if takedowns_attempted_tag:
+                takedowns_attempted = takedowns_attempted_tag.find_next_sibling('dd', class_='c-overlap__stats-value').text.strip()
+                # Check if takedowns_attempted is blank, if so, set it to None
+                takedowns_attempted = None if not takedowns_attempted else int(takedowns_attempted)
+                stats['takedowns_attempted'] = takedowns_attempted
 
-        if striking_accuracy_percent == None:
-            striking_accuracy_percent = (significant_strikes_landed / significant_strikes_attempted) * 100
+    except Exception as e:
+        print("An error occurred while parsing takedown accuracy stats:", e)
 
-        if takedown_accuracy_percent == None and takedowns_landed != None and takedowns_attempted != None:
-            takedown_accuracy_percent = (takedowns_landed / takedowns_attempted) * 100
-    except:
-        pass
-    
+    if stats['striking_accuracy_percent'] is None and stats['significant_strikes_landed'] is not None and stats['significant_strikes_attempted'] is not None:
+        stats['striking_accuracy_percent'] = (stats['significant_strikes_landed'] / stats['significant_strikes_attempted']) * 100
+
+    if stats['takedown_accuracy_percent'] is None and stats['takedowns_landed'] is not None and stats['takedowns_attempted'] is not None:
+        stats['takedown_accuracy_percent'] = (stats['takedowns_landed'] / stats['takedowns_attempted']) * 100
+
+
     try:
         number_tags = soup.find_all('div', class_='c-stat-compare__number')
+        values = [tag.text.strip() for tag in number_tags]
 
-        values = []
-        for tag in number_tags:
-            value = tag.text.strip()
-            values.append(value)
-
-        significant_strikes_landed_per_min = float(values[0])
-        significant_strikes_absorbed_per_min = float(values[1])
-        takedown_avg_per_15_min = float(values[2])
-        submission_avg_per_15_min = float(values[3])
-
-        significant_strikes_defense = convert_to_float(values[4])
-        takedown_defense_perc = convert_to_float(values[5])
-        knockdown_avg = float(values[6])
-        average_fight_time = values[7]
+        stats['significant_strikes_landed_per_min'] = float(values[0])
+        stats['significant_strikes_absorbed_per_min'] = float(values[1])
+        stats['takedown_avg_per_15_min'] = float(values[2])
+        stats['submission_avg_per_15_min'] = float(values[3])
+        stats['significant_strikes_defense'] = convert_to_float(values[4])
+        stats['knockdown_avg'] = convert_to_float(values[5])
+        stats['average_fight_time'] = values[6]
     except:
         pass
-        print(number_tags)
+
     try:
         num_tags = soup.find_all('div', class_='c-stat-3bar__value')
-        val = []
-        for tag in num_tags:
-            value = tag.text.strip()
-            val.append(value)
+        val = [tag.text.strip() for tag in num_tags]
 
         numbers = []
         percentages = []
 
         for item in val:
-            # Split the item into the main number and the percentage part
-            number, percentage = item.split(' ')
-            # Remove the parentheses and the percentage sign
+            parts = item.split(' ')
+            number = parts[0]
+            percentage = parts[1] if len(parts) > 1 else '0%'
             percentage = percentage.strip('()%')
-            # Convert both parts to integers and store them in respective lists
             numbers.append(int(number))
             percentages.append(int(percentage))
 
-        significant_strikes_by_posstanding = numbers[0]
-        significant_strikes_by_posclinching = numbers[1]
-        significant_strikes_by_posground = numbers[2]
-        w_by_ko_or_tko = numbers[3]
-        w_by_decisions = numbers[4]
-        w_by_submissions = numbers[5]
-
-        significant_strikes_by_posstanding_per = percentages[0]
-        significant_strikes_by_posclinching_per = percentages[1]
-        significant_strikes_by_posground_per = percentages[2]
-        w_by_ko_or_tko_per = percentages[3]
-        w_by_decisions_per = percentages[4]
-        w_by_submissions_per = percentages[5]
+        stats['significant_strikes_by_posstanding'] = numbers[0]
+        stats['significant_strikes_by_posclinching'] = numbers[1]
+        stats['significant_strikes_by_posground'] = numbers[2]
+        stats['w_by_ko_or_tko'] = numbers[3]
+        stats['w_by_decisions'] = numbers[4]
+        stats['w_by_submissions'] = numbers[5]
+        stats['significant_strikes_by_posstanding_per'] = percentages[0]
+        stats['significant_strikes_by_posclinching_per'] = percentages[1]
+        stats['significant_strikes_by_posground_per'] = percentages[2]
+        stats['w_by_ko_or_tko_per'] = percentages[3]
+        stats['w_by_decisions_per'] = percentages[4]
+        stats['w_by_submissions_per'] = percentages[5]
     except:
-        significant_strikes_by_posstanding = significant_strikes_by_posclinching = significant_strikes_by_posground = None
-        w_by_ko_or_tko = w_by_decisions = w_by_submissions = None
-        significant_strikes_by_posstanding_per = significant_strikes_by_posclinching_per = significant_strikes_by_posground_per = None
-        w_by_ko_or_tko_per = w_by_decisions_per = w_by_submissions_per = None
+        pass
 
     try:
-        strike_to_head = int(soup.find('text', id='e-stat-body_x5F__x5F_head_value').text)
-        strike_to_head_per = float(soup.find('text', id='e-stat-body_x5F__x5F_head_percent').text.strip('%'))
-        strike_to_body = int(soup.find('text', id='e-stat-body_x5F__x5F_body_value').text)
-        strike_to_body_per = float(soup.find('text', id='e-stat-body_x5F__x5F_body_percent').text.strip('%'))
-        strike_to_leg = int(soup.find('text', id='e-stat-body_x5F__x5F_leg_value').text)
-        strike_to_leg_per = float(soup.find('text', id='e-stat-body_x5F__x5F_leg_percent').text.strip('%'))
+        stats['strike_to_head'] = int(soup.find('text', id='e-stat-body_x5F__x5F_head_value').text)
+        stats['strike_to_head_per'] = float(soup.find('text', id='e-stat-body_x5F__x5F_head_percent').text.strip('%'))
+        stats['strike_to_body'] = int(soup.find('text', id='e-stat-body_x5F__x5F_body_value').text)
+        stats['strike_to_body_per'] = float(soup.find('text', id='e-stat-body_x5F__x5F_body_percent').text.strip('%'))
+        stats['strike_to_leg'] = int(soup.find('text', id='e-stat-body_x5F__x5F_leg_value').text)
+        stats['strike_to_leg_per'] = float(soup.find('text', id='e-stat-body_x5F__x5F_leg_percent').text.strip('%'))
     except:
-        strike_to_head = strike_to_head_per = strike_to_body = strike_to_body_per = strike_to_leg = strike_to_leg_per = None
+        pass
 
-    try:
-        nametags = soup.find_all('div', class_="c-bio__text")
-        values = []
-        for tag in nametags:
-            value = tag.text.strip()
-            values.append(value)
-
-        if len(values) == 10:
-            status = values[0]
-            place_of_birth = values[1]
-            trains_at = values[2]
-            fight_style = values[3]
-            age = float(values[4])
-            height = float(values[5])
-            weight = float(values[6])
-            ufc_debut = values[7]
-            reach = float(values[8])
-            leg_reach = float(values[8])
-        elif len(values) == 9:
-            status = values[0]
-            place_of_birth = values[1]
-            fight_style = values[2]
-            age = int(values[3])
-            height = float(values[4])
-            weight = float(values[5])
-            ufc_debut = values[6]
-            reach = float(values[7])
-            leg_reach = float(values[8])
-        else:
-            status = place_of_birth = trains_at = fight_style = age = height = weight = ufc_debut = reach = leg_reach = None
-    except:
-        status = place_of_birth = trains_at = fight_style = age = height = weight = ufc_debut = reach = leg_reach = None
-
-    return {
-        'name': name,
-        'division_title': division_title,
-        'place_of_birth': place_of_birth,
-        'status': status,
-        'trains_at': trains_at,
-        'fight_style': fight_style,
-        'age': age,
-        'height': height,
-        'weight': weight,
-        'ufc_debut': ufc_debut,
-        'reach': reach,
-        'leg_reach': leg_reach,
-        'win': win,
-        'loss': loss,
-        'draw': draw,
-        'wins_by_knockout': wins_by_knockout,
-        'first_round_finishes': first_round_finishes,
-        'striking_accuracy_percent': striking_accuracy_percent,
-        'significant_strikes_landed': significant_strikes_landed,
-        'significant_strikes_attempted': significant_strikes_attempted,
-        'takedown_accuracy_percent': takedown_accuracy_percent,
-        'takedowns_landed': takedowns_landed,
-        'takedowns_attempted': takedowns_attempted,
-        'significant_strikes_landed_per_min': significant_strikes_landed_per_min,
-        'significant_strikes_absorbed_per_min': significant_strikes_absorbed_per_min,
-        'takedown_avg_per_15_min': takedown_avg_per_15_min,
-        'submission_avg_per_15_min': submission_avg_per_15_min,
-        'significant_strikes_defense': significant_strikes_defense,
-        'take_down_defense_perc': takedown_defense_perc,
-        'knockdown_avg': knockdown_avg,
-        'average_fight_time': average_fight_time,
-        'significant_strikes_by_standing_position': significant_strikes_by_posstanding,
-        'significant_strikes_by_standing_position_per': significant_strikes_by_posstanding_per,
-        'significant_strikes_by_clinching_position': significant_strikes_by_posclinching,
-        'significant_strikes_by_clinching_position_per': significant_strikes_by_posclinching_per,
-        'significant_strikes_by_ground_position': significant_strikes_by_posground,
-        'significant_strikes_by_ground_position_per': significant_strikes_by_posground_per,
-        'w_by_ko_or_tko': w_by_ko_or_tko,
-        'w_by_ko_or_tko_per': w_by_ko_or_tko_per,
-        'w_by_decisions': w_by_decisions,
-        'w_by_decisions_per': w_by_decisions_per,
-        'w_by_submissions': w_by_submissions,
-        'w_by_submissions_per': w_by_submissions_per,
-        'strike_to_head': strike_to_head,
-        'strike_to_head_per': strike_to_head_per,
-        'strike_to_body': strike_to_body,
-        'strike_to_body_per': strike_to_body_per,
-        'strike_to_leg': strike_to_leg,
-        'strike_to_leg_per': strike_to_leg_per,
-    }
+    return stats
 
 # Test the function with a fighter URL
 
-fighter_url = 'https://www.ufc.com/athlete/john-adajar'
+fighter_url = 'https://www.ufc.com/athlete/israel-adesanya'
 print(scrape_fighter_data(fighter_url))
 
 #Test function that stores all fighter url in an array
