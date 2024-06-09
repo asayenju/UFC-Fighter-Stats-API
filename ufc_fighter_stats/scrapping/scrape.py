@@ -369,17 +369,3 @@ def scrape_fighter_data(fighter_url):
         pass
 
     return stats
-
-# Test the function with a fighter URL
-
-fighter_url1 = 'https://www.ufc.com/athlete/danny-abbadi'
-fighter_url2='https://www.ufc.com/athlete/israel-adesanya'
-print(scrape_fighter_data(fighter_url1))
-
-#Test function that stores all fighter url in an array
-main_url = 'https://www.ufc.com/athletes/all'
-base_url = 'https://www.ufc.com/athletes'
-#get_fighter_urls()
-#print(f"Total fighter URLs found: {len(fighter_urls)}")
-#for i in range(len(fighter_urls)):
-    #scrape_fighter_data(fighter_urls[i])
