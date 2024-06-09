@@ -57,3 +57,5 @@ def get_fighter_urls():
     finally:
         # Close the WebDriver session
         driver.quit()
+
+    return fighter_urls
