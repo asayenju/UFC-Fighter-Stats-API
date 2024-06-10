@@ -1,6 +1,5 @@
 import psycopg2
 
-
 def create_database():
     conn = psycopg2.connect(
         dbname="postgres",
@@ -10,6 +9,7 @@ def create_database():
     )
     conn.autocommit = True
     cursor = conn.cursor()
+    cursor.execute("DROP DATABASE IF EXISTS ufc_fighter_data")
     cursor.execute("CREATE DATABASE ufc_fighter_data")
     cursor.close()
     conn.close()

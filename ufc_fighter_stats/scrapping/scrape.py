@@ -354,15 +354,15 @@ def scrape_fighter_data(fighter_url):
                     elif label.lower() == "age":
                         stats['age'] = int(text)
                     elif label.lower() == "height":
-                        stats['height'] = text
+                        stats['height'] = float(text)
                     elif label.lower() == "weight":
-                        stats['weight'] = text
+                        stats['weight'] = float(text)
                     elif label.lower() == "octagon debut":
                         stats['ufc_debut'] = text
                     elif label.lower() == "reach":
-                        stats['reach'] = text
+                        stats['reach'] = float(text)
                     elif label.lower() == "leg reach":
-                        stats['leg_reach'] = text
+                        stats['leg_reach'] = float(text)
 
     except Exception as e:
         #print(f"An error occurred while parsing fighter bio: {e}")
