@@ -31,7 +31,7 @@ pip install flask requests beautifulsoup4 selenium
 1. Cloning the Repository
 ```bash
 git clone https://github.com/asayenju/UFC-Fighter-Stats-API.git
-cd ufc-fighter-scraping
+cd UFC-Fighter-Stats-API
 ```
 2. Download postgresql from https://www.postgresql.org/download/, make your port 5432 and password should be 1234.
 3. Set up the database <br>
