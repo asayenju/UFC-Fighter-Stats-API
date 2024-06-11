@@ -103,7 +103,7 @@ The following API Endpoints are available:
     - Parameters: id: The ID of the fighter.
     - Response: A confirmation message.
    
-#All the keys in the object of a fighter:
+# All the keys in the object of a fighter:
   ```
 
    {'name', 'division_title', 'win', 'loss', 'draw', 'trains_at', 'place_of_birth',
