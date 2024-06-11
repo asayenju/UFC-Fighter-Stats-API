@@ -28,26 +28,28 @@ pip install flask requests beautifulsoup4 selenium
 
 ## Installation and Usage
 1. Cloning the Repository
-bash
-Copy code
+```bash
 git clone <repository-url>
 cd ufc-fighter-scraping
+```
+2. Download postgresql from https://www.postgresql.org/download/ 
 2. Scraping UFC Fighter URLs
 scrape_urls.py
 Ensure you have Chrome WebDriver installed and added to your system PATH.
 Run the script using Python:
-bash
-Copy code
+
+```bash
 python scrape_urls.py
 The script will automatically scrape the URLs of UFC fighters and save them to the specified directory.
-3. Scraping UFC Fighter Data
+```
+4. Scraping UFC Fighter Data
 scrape.py
 Run the script using Python:
 bash
 Copy code
 python scrape.py
 The script will scrape fighter data from the specified URLs and output the information in a structured format.
-4. Running the Web Application
+5. Running the Web Application
 app.py and route.py
 Run the web application using Python:
 bash
