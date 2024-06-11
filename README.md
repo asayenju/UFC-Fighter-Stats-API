@@ -30,7 +30,7 @@ pip install flask requests beautifulsoup4 selenium
 ## Installation and Usage
 1. Cloning the Repository
 ```bash
-git clone <repository-url>
+git clone
 cd ufc-fighter-scraping
 ```
 2. Download postgresql from https://www.postgresql.org/download/, make your port 5432 and password should be 1234.
