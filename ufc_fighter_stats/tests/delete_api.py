@@ -2,7 +2,7 @@ import requests
 
 # Define the URL of the API endpoint
 url = 'http://127.0.0.1:5000/api/fighters'
-fighter_id = 2960
+fighter_id = 2952
 response = requests.delete(f'http://127.0.0.1:5000/api/fighters/{fighter_id}', json=fighter_id)
 
 if response.status_code == 200:

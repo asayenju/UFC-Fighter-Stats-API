@@ -242,10 +242,13 @@ def delete_fighter(fighter_id):
     conn = connect_db()
     with conn.cursor() as cur:
         cur.execute("DELETE FROM fighters WHERE id = %s", (fighter_id,))
-        cur.execute("DELETE FROM fighters WHERE id = %s", (fighter_id,))
-        cur.execute("UPDATE fighters SET id = id - 1 WHERE id > %s", (fighter_id,))
         if cur.rowcount == 0:
+            conn.rollback()  # Rollback the transaction if no rows were deleted
             return jsonify({'error': 'Fighter not found'}), 404
+
+        # Update the primary key sequence to prevent gaps
+        cur.execute("SELECT setval(pg_get_serial_sequence('fighters', 'id'), coalesce(max(id),0)) FROM fighters")
         conn.commit()
+
     conn.close()
     return jsonify({'message': 'Fighter deleted successfully'}), 200
