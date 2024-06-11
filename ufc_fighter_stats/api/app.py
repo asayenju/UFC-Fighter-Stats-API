@@ -1,9 +1,8 @@
 import os
 import sys
-from flask import Flask
 
 # Append the parent directory to sys.path
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), 'api/routes')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from routes.fighters import app as fighters_app
 
