@@ -87,8 +87,8 @@ The directory structure of the project is as follows:
 The following API Endpoints are available:
 
 * Retrieve all fighters:
-- Endpoint: /api/fighters
-- HTTP Method: GET
-- Response: a JSON array of fighter objects viewed in dictionaries
+  - Endpoint: /api/fighters
+  - HTTP Method: GET
+  - Response: a JSON array of fighter objects viewed in dictionaries
 
 
