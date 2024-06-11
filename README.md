@@ -8,7 +8,8 @@ The project comprises the following components:
 * scrape.py: This script scrapes detailed information about individual UFC fighters from their respective UFC profile pages using Requests and BeautifulSoup.
 * app.py: This script serves as the main Python file for running the web application to display the scraped UFC fighter data.
 * route.py: This script contains the routing logic for the Flask web application to serve scraped UFC fighter data.
-* Front-end Templates (HTML/CSS/JS): These templates are used for the front-end of the web application and display the scraped fighter data.
+* setup_db.py: Sets up the connection and creates the database in postgresql.
+* insert.py: Calls scrape_urls.py and scrape.py to scrape the data and insert it into the database
 
 # Requirements
 
