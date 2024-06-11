@@ -1,7 +1,7 @@
-#UFC Fighter Data API
+# UFC Fighter Data API
 This project consists of Python scripts for scraping data about UFC fighters from the official UFC website and a web application built using Flask to display the scraped data.
 
-##Overview
+## Overview
 The project comprises the following components:
 
 scrape_urls.py: This script scrapes URLs of UFC fighters from the official UFC website using Selenium.
