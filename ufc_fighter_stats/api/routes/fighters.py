@@ -10,6 +10,17 @@ db_config = {
     'host': 'localhost'
 }
 
+# Function to establish database connection
+def connect_db():
+    try:
+        conn = psycopg2.connect(**db_config)
+        return conn
+    except psycopg2.Error as e:
+        # Handle connection errors
+        print("Database connection error:", e)
+        return None
+    
+
 @app.route('/')
 def home():
     return "Hello World"
