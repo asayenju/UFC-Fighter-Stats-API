@@ -24,28 +24,6 @@ def connect_db():
 def home():
     return "Hello World"
 
-"""
-@app.route('/api/test')
-def test_db_connection():
-    # Attempt to connect to the database
-    conn = connect_db()
-    if conn:
-        try:
-            # Example query: Retrieve all records from a table
-            cursor = conn.cursor()
-            cursor.execute("SELECT * FROM your_table")
-            records = cursor.fetchall()
-            cursor.close()
-            conn.close()
-            return jsonify(records)
-        except psycopg2.Error as e:
-            # Handle query errors
-            print("Database query error:", e)
-            return jsonify({'error': 'Database query error'})
-    else:
-        return jsonify({'error': 'Failed to connect to the database'})
-"""
-
 
 @app.route('/api/fighters', methods=['GET'])
 def get_fighters():
@@ -215,17 +193,48 @@ def update_fighter(fighter_id):
     # Validate input fields
     if not data:
         return jsonify({'error': 'No data provided'}), 400
+
+    # Construct the SET part of the SQL query dynamically based on the provided data
+    set_values = []
+    set_params = []
+    for key, value in data.items():
+        # Only update if the key is valid and not the fighter_id
+        if key in ['name', 'division_title', 'win', 'loss', 'draw', 'trains_at', 'place_of_birth',
+        'status', 'fight_style', 'age', 'height', 'weight', 'ufc_debut', 'reach', 'leg_reach',
+        'wins_by_knockout', 'first_round_finishes', 'striking_accuracy_percent',
+        'significant_strikes_landed', 'significant_strikes_attempted',
+        'takedown_accuracy_percent', 'takedowns_landed', 'takedowns_attempted',
+        'sig_str_landed_per_min', 'sig_str_absorbed_per_min', 'takedown_avg_per_15_min',
+        'submission_avg_per_15_min', 'sig_str_defense_percent', 'takedown_defense_percent',
+        'knockdown_avg', 'average_fight_time', 'sig_str_standing_amount', 'sig_str_clinch_amount',
+        'sig_str_ground_amount', 'win_by_ko_tko_amount', 'win_by_dec_amount', 'win_by_sub_amount',
+        'sig_str_standing_percentage', 'sig_str_clinch_percentage', 'sig_str_ground_percentage',
+        'strike_to_head', 'strike_to_head_per', 'strike_to_body', 'strike_to_body_per', 'strike_to_leg', 'strike_to_leg_per']:
+            set_values.append(f"{key} = %s")
+            set_params.append(value)
+
+    # Check if any valid fields were provided for update
+    if not set_values:
+        return jsonify({'error': 'No valid fields provided for update'}), 400
+
+    # Add fighter_id to the parameters list
+    set_params.append(fighter_id)
+
+    # Construct the UPDATE query
+    update_query = f"""
+        UPDATE fighters
+        SET {', '.join(set_values)}
+        WHERE id = %s
+    """
+
     conn = connect_db()
     with conn.cursor() as cur:
-        cur.execute("""
-            UPDATE fighters
-            SET name = %s, division_title = %s, win = %s, loss = %s, draw = %s
-            WHERE id = %s
-        """, (data.get('name'), data.get('division_title'), data.get('win'), data.get('loss'), data.get('draw'), fighter_id))
+        cur.execute(update_query, set_params)
         if cur.rowcount == 0:
             return jsonify({'error': 'Fighter not found'}), 404
         conn.commit()
     conn.close()
+
     return jsonify({'message': 'Fighter updated successfully'})
 
 @app.route('/api/fighters/<int:fighter_id>', methods=['DELETE'])
