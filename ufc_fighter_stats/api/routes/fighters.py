@@ -171,31 +171,7 @@ def create_fighter():
     for field in stats.keys():
         if field not in allowed_attributes:
             return jsonify({'error': f'Invalid field: {field}'}), 400
-    """
-    conn = connect_db()
-    with conn.cursor() as cur:
-        cur.execute(insert_query, (
-            stats['name'], stats['division_title'], stats['win'], stats['loss'], stats['draw'], 
-            stats['trains_at'], stats['place_of_birth'], stats['status'], stats['fight_style'], 
-            stats['age'], stats['height'], stats['weight'], stats['ufc_debut'], stats['reach'], 
-            stats['leg_reach'], stats['wins_by_knockout'], stats['first_round_finishes'], 
-            stats['striking_accuracy_percent'], stats['significant_strikes_landed'], 
-            stats['significant_strikes_attempted'], stats['takedown_accuracy_percent'], 
-            stats['takedowns_landed'], stats['takedowns_attempted'], stats['sig_str_landed_per_min'], 
-            stats['sig_str_absorbed_per_min'], stats['takedown_avg_per_15_min'], 
-            stats['submission_avg_per_15_min'], stats['sig_str_defense_percent'], 
-            stats['takedown_defense_percent'], stats['knockdown_avg'], stats['average_fight_time'], 
-            stats['sig_str_standing_amount'], stats['sig_str_clinch_amount'], 
-            stats['sig_str_ground_amount'], stats['win_by_ko_tko_amount'], stats['win_by_dec_amount'], 
-            stats['win_by_sub_amount'], stats['sig_str_standing_percentage'], 
-            stats['sig_str_clinch_percentage'], stats['sig_str_ground_percentage'], 
-            stats['strike_to_head'], stats['strike_to_head_per'], stats['strike_to_body'], 
-            stats['strike_to_body_per'], stats['strike_to_leg'], stats['strike_to_leg_per']
-        ))
-        fighter_id = cur.fetchone()[0]
-        conn.commit()
-    conn.close()
-    """
+
     fighter_id = None
     try:
         conn = connect_db()
