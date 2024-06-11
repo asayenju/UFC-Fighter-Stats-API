@@ -1,15 +1,14 @@
-from flask import Flask
 import os
 import sys
+from flask import Flask
 
 # Append the parent directory to sys.path
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from api.routes import fighters
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), 'api/routes')))
 
-app = Flask(__name__)
+from routes.fighters import app as fighters_app
 
-#Register blueprint for fighters routes
-app.register_blueprint(fighters.bp)
+# Use the routes defined in fighters.py
+app = fighters_app
 
 if __name__ == '__main__':
     app.run(debug=True)

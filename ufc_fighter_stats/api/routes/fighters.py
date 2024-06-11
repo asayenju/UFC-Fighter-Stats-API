@@ -1,31 +1,62 @@
-from flask import Blueprint, jsonify, request
+from flask import Flask, jsonify, request
 import psycopg2
 from psycopg2.extras import RealDictCursor
 
-bp = Blueprint('fighters', __name__, url_prefix='/api/fighters')
-
+app = Flask(__name__)
 db_config = {
-    'dbname': 'ufc_fighter_stats',
+    'dbname': 'ufc_fighter_data',
     'user': 'postgres',
     'password': '1234',
     'host': 'localhost'
 }
 
-#connect to database
+# Function to establish database connection
 def connect_db():
-    conn = psycopg2.cpnnect(**db_config)
-    return conn
+    try:
+        conn = psycopg2.connect(**db_config)
+        return conn
+    except psycopg2.Error as e:
+        # Handle connection errors
+        print("Database connection error:", e)
+        return None
 
-@bp.route('/api/fighters', methods=['GET'])
+@app.route('/')
+def home():
+    return "Hello World"
+
+"""
+@app.route('/api/test')
+def test_db_connection():
+    # Attempt to connect to the database
+    conn = connect_db()
+    if conn:
+        try:
+            # Example query: Retrieve all records from a table
+            cursor = conn.cursor()
+            cursor.execute("SELECT * FROM your_table")
+            records = cursor.fetchall()
+            cursor.close()
+            conn.close()
+            return jsonify(records)
+        except psycopg2.Error as e:
+            # Handle query errors
+            print("Database query error:", e)
+            return jsonify({'error': 'Database query error'})
+    else:
+        return jsonify({'error': 'Failed to connect to the database'})
+"""
+
+
+@app.route('/api/fighters', methods=['GET'])
 def get_fighters():
     conn = connect_db()
     with conn.cursor(cursor_factory=RealDictCursor) as cur:
-        cur.execute("SELECT * FROM fighters")
+        cur.execute("SELECT * FROM fighters ORDER BY id")
         fighters = cur.fetchall()
     conn.close()
     return jsonify(fighters)
 
-@bp.route('/api/fighters/<int:fighter_id>', methods=['GET'])
+@app.route('/api/fighters/<int:fighter_id>', methods=['GET'])
 def get_fighter(fighter_id):
     conn = connect_db()
     with conn.cursor(cursor_factory=RealDictCursor) as cur:
@@ -36,7 +67,22 @@ def get_fighter(fighter_id):
     conn.close()
     return jsonify(fighter)
 
-@bp.route('/api/fighters', methods=['POST'])
+@app.route('/api/fighters/<string:name>', methods=['GET'])
+def get_fighter_by_name(name):
+    conn = connect_db()
+    if not conn:
+        return jsonify({'error': 'Failed to connect to the database'}), 500
+    
+    with conn.cursor(cursor_factory=RealDictCursor) as cur:
+        cur.execute("SELECT * FROM fighters WHERE name = %s", (name,))
+        fighter = cur.fetchone()
+        if fighter is None:
+            return jsonify({'error': 'Fighter not found'}), 404
+    
+    conn.close()
+    return jsonify(fighter)
+
+@app.route('/api/fighters', methods=['POST'])
 def create_fighter():
     data = request.json
     # Validate input fields
@@ -56,7 +102,7 @@ def create_fighter():
     conn.close()
     return jsonify({'message': 'Fighter created successfully', 'fighter_id': fighter_id}), 201
 
-@bp.route('/api/fighters/<int:fighter_id>', methods=['PUT'])
+@app.route('/api/fighters/<int:fighter_id>', methods=['PUT'])
 def update_fighter(fighter_id):
     data = request.json
     # Validate input fields
@@ -75,7 +121,7 @@ def update_fighter(fighter_id):
     conn.close()
     return jsonify({'message': 'Fighter updated successfully'})
 
-@bp.route('/api/fighters/<int:fighter_id>', methods=['DELETE'])
+@app.route('/api/fighters/<int:fighter_id>', methods=['DELETE'])
 def delete_fighter(fighter_id):
     conn = connect_db()
     with conn.cursor() as cur:
