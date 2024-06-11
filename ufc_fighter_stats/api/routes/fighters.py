@@ -246,4 +246,4 @@ def delete_fighter(fighter_id):
             return jsonify({'error': 'Fighter not found'}), 404
         conn.commit()
     conn.close()
-    return jsonify({'message': 'Fighter deleted successfully'})
+    return jsonify({'message': 'Fighter deleted successfully'}), 200
