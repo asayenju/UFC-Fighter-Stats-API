@@ -242,6 +242,8 @@ def delete_fighter(fighter_id):
     conn = connect_db()
     with conn.cursor() as cur:
         cur.execute("DELETE FROM fighters WHERE id = %s", (fighter_id,))
+        cur.execute("DELETE FROM fighters WHERE id = %s", (fighter_id,))
+        cur.execute("UPDATE fighters SET id = id - 1 WHERE id > %s", (fighter_id,))
         if cur.rowcount == 0:
             return jsonify({'error': 'Fighter not found'}), 404
         conn.commit()
