@@ -58,7 +58,21 @@ python app.py
 ```
 You can access the API by a web browser.
 
-Directory Structure
+# API Endpoints:
+The following API Endpoints are available:
+
+* Retrieve all fighters:
+  - Endpoint: /api/fighters
+  - HTTP Method: GET
+  - Response: a JSON array of fighter objects viewed in dictionaries
+
+ * Retrieve a specific fighter:
+    - Endpoint: /api/fighters/<id>
+    - HTTP Method: GET
+    - Parameters: id of fighter
+    - Response: JSON object containing the fighter’s details
+  
+# Directory Structure
 The directory structure of the project is as follows:
 
 ```arduino
@@ -83,12 +97,6 @@ The directory structure of the project is as follows:
 ```
 
 
-#API Endpoints:
-The following API Endpoints are available:
 
-* Retrieve all fighters:
-  - Endpoint: /api/fighters
-  - HTTP Method: GET
-  - Response: a JSON array of fighter objects viewed in dictionaries
 
 
