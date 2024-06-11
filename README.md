@@ -78,8 +78,46 @@ The following API Endpoints are available:
     - Parameters: id of fighter
     - Response: JSON object containing the fighter’s details
    
-    
+  * Add a new fighter:
+    - Endpoint: /api/fighters
+    - HTTP Method: POST
+    - Request: A JSON object containing fighter details
+    - Response: A JSON object containing the created fighter details
+    - Name, division, wins, draws and loss are required but everything else are option
+    - You cannot add new keys to the dictionary to maintain data integrity
 
+  * Update Fighter Details:
+    - Endpoint: /api/fighters/<id>
+    - HTTP Method: PUT
+    - Description: Updates details of an existing fighter by ID.
+    - Parameters: id: The ID of the fighter.
+    - Request Body: A JSON object containing the updated details.
+    - Response: A JSON object containing the updated fighter's details.
+    - You can update details with existing keys
+
+
+  * Delete a Fighter:
+    - Endpoint: /api/fighters/<id>
+    - HTTP Method: DELETE
+    - Description: Deletes a fighter from the database by ID.
+    - Parameters: id: The ID of the fighter.
+    - Response: A confirmation message.
+   
+#All the keys in the object of a fighter:
+  ```
+
+   {'name', 'division_title', 'win', 'loss', 'draw', 'trains_at', 'place_of_birth',
+        'status', 'fight_style', 'age', 'height', 'weight', 'ufc_debut', 'reach', 'leg_reach',
+        'wins_by_knockout', 'first_round_finishes', 'striking_accuracy_percent',
+        'significant_strikes_landed', 'significant_strikes_attempted',
+        'takedown_accuracy_percent', 'takedowns_landed', 'takedowns_attempted',
+        'sig_str_landed_per_min', 'sig_str_absorbed_per_min', 'takedown_avg_per_15_min',
+        'submission_avg_per_15_min', 'sig_str_defense_percent', 'takedown_defense_percent',
+        'knockdown_avg', 'average_fight_time', 'sig_str_standing_amount', 'sig_str_clinch_amount',
+        'sig_str_ground_amount', 'win_by_ko_tko_amount', 'win_by_dec_amount', 'win_by_sub_amount',
+        'sig_str_standing_percentage', 'sig_str_clinch_percentage', 'sig_str_ground_percentage',
+        'strike_to_head', 'strike_to_head_per', 'strike_to_body', 'strike_to_body_per', 'strike_to_leg', 'strike_to_leg_per'}
+    ```
   
 # Directory Structure
 The directory structure of the project is as follows:
@@ -95,7 +133,7 @@ The directory structure of the project is as follows:
   |   |-- /routes
   |       |-- fighters.py
   |-- /db
-  |   |-- schema.sql
+  |   |-- setup_db.py
   |   |-- insert_data.py
   |-- /tests
   |   |-- test_scraping.py
