@@ -64,13 +64,22 @@ The following API Endpoints are available:
 * Retrieve all fighters:
   - Endpoint: /api/fighters
   - HTTP Method: GET
-  - Response: a JSON array of fighter objects viewed in dictionaries
+  - Response: a JSON array of fighter objects
 
- * Retrieve a specific fighter:
-    - Endpoint: /api/fighters/<id>
+ * Retrieve a specific fighter by primary key id:
+    - Endpoint: /api/fighters/id
     - HTTP Method: GET
     - Parameters: id of fighter
     - Response: JSON object containing the fighter’s details
+  
+  * Retrieve a specific fighter by name:
+    - Endpoint: /api/fighters/name
+    - HTTP Method: GET
+    - Parameters: id of fighter
+    - Response: JSON object containing the fighter’s details
+   
+    
+
   
 # Directory Structure
 The directory structure of the project is as follows:
