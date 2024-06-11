@@ -4,27 +4,29 @@ This project consists of Python scripts for scraping data about UFC fighters fro
 ## Overview
 The project comprises the following components:
 
-scrape_urls.py: This script scrapes URLs of UFC fighters from the official UFC website using Selenium.
-scrape.py: This script scrapes detailed information about individual UFC fighters from their respective UFC profile pages using Requests and BeautifulSoup.
-app.py: This script serves as the main Python file for running the web application to display the scraped UFC fighter data.
-route.py: This script contains the routing logic for the Flask web application to serve scraped UFC fighter data.
-Front-end Templates (HTML/CSS/JS): These templates are used for the front-end of the web application and display the scraped fighter data.
-Requirements
+* scrape_urls.py: This script scrapes URLs of UFC fighters from the official UFC website using Selenium.
+* scrape.py: This script scrapes detailed information about individual UFC fighters from their respective UFC profile pages using Requests and BeautifulSoup.
+* app.py: This script serves as the main Python file for running the web application to display the scraped UFC fighter data.
+* route.py: This script contains the routing logic for the Flask web application to serve scraped UFC fighter data.
+* Front-end Templates (HTML/CSS/JS): These templates are used for the front-end of the web application and display the scraped fighter data.
 
-###To run the scripts and web application, you need to have the following dependencies installed:
+# Requirements
 
-Python 3.x
-Flask
-Requests
-BeautifulSoup
-Selenium (for scrape_urls.py)
-Chrome WebDriver (for scrape_urls.py)
+### To run the scripts and web application, you need to have the following dependencies installed:
+
+* Python 3.12
+* Flask
+* Requests
+* BeautifulSoup
+* Selenium (for scrape_urls.py)
+* Chrome WebDriver (for scrape_urls.py)
+  
 You can install the Python dependencies using pip:
-
 ```bash
 pip install flask requests beautifulsoup4 selenium
 ```
-Installation and Usage
+
+## Installation and Usage
 1. Cloning the Repository
 bash
 Copy code
