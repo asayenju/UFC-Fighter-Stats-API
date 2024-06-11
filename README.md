@@ -117,7 +117,7 @@ The following API Endpoints are available:
         'sig_str_ground_amount', 'win_by_ko_tko_amount', 'win_by_dec_amount', 'win_by_sub_amount',
         'sig_str_standing_percentage', 'sig_str_clinch_percentage', 'sig_str_ground_percentage',
         'strike_to_head', 'strike_to_head_per', 'strike_to_body', 'strike_to_body_per', 'strike_to_leg', 'strike_to_leg_per'}
-    ```
+```
   
 # Directory Structure
 The directory structure of the project is as follows:
