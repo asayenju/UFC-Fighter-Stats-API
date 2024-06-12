@@ -105,20 +105,54 @@ The following API Endpoints are available:
     - Response: A confirmation message.
    
 # All the keys in the object of a fighter:
-  ```
+* 'name': String of fighter's name
+* 'id': Integer Primary key identifier
+* 'division_title': String of weight class they are in
+* 'win': Integer of wins
+* 'loss': Integer of losses
+* 'draw': Integer of draws
+* 'trains_at': String of their training camp
+* 'place_of_birth': String of their place of birth
+* 'status': String of their status in the present 
+* 'fight_style': String of fighting style
+* 'age': Integer of age
+* 'height': Float of height
+* 'weight': Float of weight
+* 'ufc_debut': String of the date of ufc debut
+* 'reach': Float of their reach by hands
+* 'leg_reach': Float of their leg reach
+* 'wins_by_knockout': Integer of wins by knockout
+* 'first_round_finishes': Integer of wins by first round finishes
+* 'striking_accuracy_percent': Float of striking accuracy percentage
+* 'significant_strikes_landed': Integer of significant strikes landed
+* 'significant_strikes_attempted': Integer of significant strikes attempted
+* 'takedown_accuracy_percent': Float of takedown accuracy percentage
+* 'takedowns_landed': Integer of takedowns landed
+* 'takedowns_attempted': Integer of takedowns attempted
+* 'sig_str_landed_per_min': Float of significant strikes landed per minute
+* 'sig_str_absorbed_per_min': Float of significant strikes absorber per min
+* 'takedown_avg_per_15_min': Float of takedown average per 15 min
+* 'submission_avg_per_15_min': Float of submission average per 15 min
+* 'sig_str_defense_percent': Float of significant striking defense percentage
+* 'takedown_defense_percent': Float of takedown defense percentage
+* 'knockdown_avg': Float of knockdown average
+* 'average_fight_time': String of average fight time
+* 'sig_str_standing_amount': Integer of Signicant strikes when standing
+* 'sig_str_clinch_amount': Integer of significant strikes when clinching
+* 'sig_str_ground_amount': Integer of significant strikes when fighter is in ground
+* 'win_by_ko_tko_amount': Win by knockout/technical knockout
+* 'win_by_dec_amount': Win by decisions
+* 'win_by_sub_amount': Win by submissions
+* 'sig_str_standing_percentage': Float of significant strikes when standing percentage
+* 'sig_str_clinch_percentage': Float of significant strikes when clinching percentage
+* 'sig_str_ground_percentage': Float of significant strikes when fighter is in ground
+* 'strike_to_head': Integer of strikes to head
+* 'strike_to_head_per': Float of strikes to head percentage
+* 'strike_to_body': Integer of strikes to body
+* 'strike_to_body_per': Float of strikes to body percentage
+* 'strike_to_leg': Integer of strikes to leg
+* 'strike_to_leg_per': Float of strikes to leg precentage
 
-   {'name', 'division_title', 'win', 'loss', 'draw', 'trains_at', 'place_of_birth',
-        'status', 'fight_style', 'age', 'height', 'weight', 'ufc_debut', 'reach', 'leg_reach',
-        'wins_by_knockout', 'first_round_finishes', 'striking_accuracy_percent',
-        'significant_strikes_landed', 'significant_strikes_attempted',
-        'takedown_accuracy_percent', 'takedowns_landed', 'takedowns_attempted',
-        'sig_str_landed_per_min', 'sig_str_absorbed_per_min', 'takedown_avg_per_15_min',
-        'submission_avg_per_15_min', 'sig_str_defense_percent', 'takedown_defense_percent',
-        'knockdown_avg', 'average_fight_time', 'sig_str_standing_amount', 'sig_str_clinch_amount',
-        'sig_str_ground_amount', 'win_by_ko_tko_amount', 'win_by_dec_amount', 'win_by_sub_amount',
-        'sig_str_standing_percentage', 'sig_str_clinch_percentage', 'sig_str_ground_percentage',
-        'strike_to_head', 'strike_to_head_per', 'strike_to_body', 'strike_to_body_per', 'strike_to_leg', 'strike_to_leg_per'}
-```
   
 # Directory Structure
 The directory structure of the project is as follows:
