@@ -7,7 +7,7 @@ db_config = {
     'dbname': 'ufc_fighter_data',
     'user': 'postgres',
     'password': '1234',
-    'host': 'localhost'
+    'host': 'db'
 }
 
 # Function to establish database connection
@@ -23,7 +23,12 @@ def connect_db():
 
 @app.route('/')
 def home():
-    return "Hello World"
+    return "Welcome to UFC fighter Stats API"
+
+def reorder_fighter_data(fighter):
+    reordered_fighter = {'id': fighter['id'], 'name': fighter['name']}
+    reordered_fighter.update({k: v for k, v in fighter.items() if k not in ['id', 'name']})
+    return reordered_fighter
 
 
 @app.route('/api/fighters', methods=['GET'])
@@ -33,8 +38,9 @@ def get_fighters():
         with conn.cursor(cursor_factory=RealDictCursor) as cur:
             cur.execute("SELECT * FROM fighters ORDER BY id")
             fighters = cur.fetchall()
+            reordered_fighters = [reorder_fighter_data(fighter) for fighter in fighters]
         conn.close()
-        return jsonify(fighters)
+        return jsonify(reordered_fighters)
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
@@ -49,7 +55,8 @@ def get_fighter(fighter_id):
             if fighter is None:
                 return jsonify({'error': 'Fighter not found'}), 404
         conn.close()
-        return jsonify(fighter)
+        reordered_fighter = reorder_fighter_data(fighter)
+        return jsonify(reordered_fighter)
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
@@ -68,7 +75,8 @@ def get_fighter_by_name(name):
                 return jsonify({'error': 'Fighter not found'}), 404
 
         conn.close()
-        return jsonify(fighter)
+        reordered_fighter = reorder_fighter_data(fighter)
+        return jsonify(reordered_fighter)
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 

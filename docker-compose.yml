@@ -8,7 +8,10 @@ services:
     environment:
       FLASK_APP: ufc_fighter_stats/api/app.py
       FLASK_RUN_HOST: 0.0.0.0
-      DATABASE_URL: postgres://postgres:1234@db:5432/ufc_fighter_data
+      POSTGRES_DB: ufc_fighter_data
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 1234
+      POSTGRES_HOST: db
     depends_on:
       - db
 
