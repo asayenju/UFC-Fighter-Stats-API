@@ -7,7 +7,7 @@ db_config = {
     'dbname': 'ufc_fighter_data',
     'user': 'postgres',
     'password': '1234',
-    'host': 'localhost'
+    'host': 'db'
 }
 
 # Function to establish database connection
@@ -23,8 +23,7 @@ def connect_db():
 
 @app.route('/')
 def home():
-    return "Hello World"
-
+    return "Welcome to UFC fighter Stats API"
 
 @app.route('/api/fighters', methods=['GET'])
 def get_fighters():
