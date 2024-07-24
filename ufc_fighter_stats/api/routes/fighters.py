@@ -25,12 +25,6 @@ def connect_db():
 def home():
     return "Welcome to UFC fighter Stats API"
 
-def reorder_fighter_data(fighter):
-    reordered_fighter = {'id': fighter['id'], 'name': fighter['name']}
-    reordered_fighter.update({k: v for k, v in fighter.items() if k not in ['id', 'name']})
-    return reordered_fighter
-
-
 @app.route('/api/fighters', methods=['GET'])
 def get_fighters():
     try:
@@ -38,9 +32,8 @@ def get_fighters():
         with conn.cursor(cursor_factory=RealDictCursor) as cur:
             cur.execute("SELECT * FROM fighters ORDER BY id")
             fighters = cur.fetchall()
-            reordered_fighters = [reorder_fighter_data(fighter) for fighter in fighters]
         conn.close()
-        return jsonify(reordered_fighters)
+        return jsonify(fighters)
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
@@ -55,8 +48,7 @@ def get_fighter(fighter_id):
             if fighter is None:
                 return jsonify({'error': 'Fighter not found'}), 404
         conn.close()
-        reordered_fighter = reorder_fighter_data(fighter)
-        return jsonify(reordered_fighter)
+        return jsonify(fighter)
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
@@ -75,8 +67,7 @@ def get_fighter_by_name(name):
                 return jsonify({'error': 'Fighter not found'}), 404
 
         conn.close()
-        reordered_fighter = reorder_fighter_data(fighter)
-        return jsonify(reordered_fighter)
+        return jsonify(fighter)
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
