@@ -5,7 +5,7 @@ FROM python:3.12
 WORKDIR C:\Users\ashwi\UFC-Fighter-Stats-API\ufc_fighter_stats
 
 # Copy the requirements.txt file into the container
-COPY requirements.txt .
+COPY ufc_fighter_stats/requirements.txt .
 
 # Install the required Python packages
 RUN pip install --no-cache-dir -r requirements.txt
