@@ -1,2 +1,6 @@
 ufc_fighter_data_backup.git
 /ufc_fighter_stats/api/routes/__pycache__
+# Elastic Beanstalk Files
+.elasticbeanstalk/*
+!.elasticbeanstalk/*.cfg.yml
+!.elasticbeanstalk/*.global.yml
