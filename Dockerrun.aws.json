@@ -1,5 +1,5 @@
 {
-    "AWSEBDockerrunVersion": 2,
+    "AWSEBDockerrunVersion": 1,
     "containerDefinitions": [
       {
         "name": "web",
@@ -8,8 +8,60 @@
         "memory": 512,
         "portMappings": [
           {
-            "containerPort": 80,
-            "hostPort": 80
+            "containerPort": 5000,
+            "hostPort": 5000
+          }
+        ],
+        "environment": [
+          {
+            "name": "FLASK_APP",
+            "value": "ufc_fighter_stats/api/app.py"
+          },
+          {
+            "name": "FLASK_RUN_HOST",
+            "value": "0.0.0.0"
+          },
+          {
+            "name": "POSTGRES_DB",
+            "value": "ufc_fighter_data"
+          },
+          {
+            "name": "POSTGRES_USER",
+            "value": "postgres"
+          },
+          {
+            "name": "POSTGRES_PASSWORD",
+            "value": "1234"
+          },
+          {
+            "name": "POSTGRES_HOST",
+            "value": "db"
+          }
+        ]
+      },
+      {
+        "name": "db",
+        "image": "postgres:latest",
+        "essential": true,
+        "memory": 512,
+        "portMappings": [
+          {
+            "containerPort": 5432,
+            "hostPort": 5432
+          }
+        ],
+        "environment": [
+          {
+            "name": "POSTGRES_DB",
+            "value": "ufc_fighter_data"
+          },
+          {
+            "name": "POSTGRES_USER",
+            "value": "postgres"
+          },
+          {
+            "name": "POSTGRES_PASSWORD",
+            "value": "1234"
           }
         ]
       }
