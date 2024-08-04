@@ -51,11 +51,14 @@ python insert.py
 ```
 The script will scrape fighter urls and fighter data then insert into the database.
 
-5. Running the Web Application
-app.py<br>
-Run the API using Python:
+5. To build Docker image:
 ```bash
-python app.py
+docker build -t ufc-fighter-stats-api .
+```
+
+6.Run the Docker container:
+```bash
+docker run -p 5000:5000 ufc-fighter-stats-api
 ```
 You can access the API by a web browser.
 
